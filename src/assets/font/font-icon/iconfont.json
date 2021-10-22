@@ -1,0 +1,30 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "7141689",
+      "name": "github",
+      "font_class": "github",
+      "unicode": "e632",
+      "unicode_decimal": 58930
+    },
+    {
+      "icon_id": "8797986",
+      "name": "浏览",
+      "font_class": "liulan",
+      "unicode": "e7d0",
+      "unicode_decimal": 59344
+    },
+    {
+      "icon_id": "17292022",
+      "name": "日期",
+      "font_class": "riqi",
+      "unicode": "e646",
+      "unicode_decimal": 58950
+    }
+  ]
+}

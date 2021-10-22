@@ -7,7 +7,12 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "@toast-ui/editor": "^3.1.0",
+    "@toast-ui/editor-plugin-code-syntax-highlight": "^3.0.0",
+    "@toast-ui/vue-editor": "^3.1.0",
+    "axios": "^0.23.0",
     "core-js": "^3.6.5",
+    "prismjs": "^1.25.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"
