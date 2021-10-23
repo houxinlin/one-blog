@@ -1,5 +1,10 @@
 import axios from './axiso'
-
+export function listDiaryApi() {
+  return axios({
+    url: '/api/blog/listDiary',
+    method: 'get',
+  })
+}
 export function getListApi(data) {
   return axios({
     url: '/api/blog/list',
@@ -16,7 +21,15 @@ export function getMarkdownContentApi(data) {
 }
 export function listClassifyApi() {
   return axios({
-    url: '/api/classify/getClassify',
+    url: '/api/classify/listClassify',
     method: 'get',
+  })
+}
+
+export function addBlogApi(data) {
+  return axios({
+    url: '/api/blog/add',
+    method: 'post',
+    data:data
   })
 }

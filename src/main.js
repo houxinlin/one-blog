@@ -3,6 +3,12 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
-let vm =createApp(App).use(store).use(router).mount('#app')
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+// import 'element-ui/lib/theme-default/index.css'
 
-console.log(vm)
+
+
+
+let vm =createApp(App).use(ElementPlus).use(store).use(router).mount('#app')
+

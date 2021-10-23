@@ -1,0 +1,277 @@
+<template>
+  <div class="desktop">
+
+    <div :class="{'shadow':active<bookeSize-1,'center':active>0 &&active<=bookeSize-1,'center-back':active==bookeSize}" class="book">
+
+      <div :style="{'z-index':zIndex[index]}" :class="{'active':active==index,'flipped':active>index}" v-for="(item,index) in bookeSize " :key="index" class="book-page">
+        <div v-on:click.stop="nextPage(index)" class="front">
+          <div v-if="index==0" class="conver">
+            <div>日记本</div>
+            <img src="../assets/imgs/jihe.jpeg" alt="">
+          </div>
+          <div v-if="index>=1 && index <bookeSize-1" class="content">
+            <header>{{articleList[index-1][0].blogTitle}}</header>
+            <div class="date">{{articleList[index-1][0].createDate}}</div>
+            <article>{{articleList[index-1][0].markdownContent}}</article>
+          </div>
+        </div>
+        <div @click.stop="upPage(index)" class="after">
+          <div class="catalogue" v-if="index==0">
+            <h3>目录</h3>
+            <div>
+              <template v-for="(item ,i) in articleList" :key="item.id">
+                <li @click.stop="goToPage(i+1,it)" v-for="(el ,it) in item" :key="el.id">
+
+                  <span>{{el.blogTitle}}</span>
+                  <span>...........................................................</span>
+                  <span><span>{{(i*2+it)+1}}</span></span>
+                </li>
+              </template>
+            </div>
+          </div>
+          <div v-if="index>=1 && index <bookeSize-1" class="content">
+            <header>{{articleList[index-1].length>1?articleList[index-1][1].blogTitle:''}}</header>
+            <div class="date">{{articleList[index-1].length>1?articleList[index-1][1].createDate:''}}</div>
+            <article>{{articleList[index-1].length>1?articleList[index-1][1].markdownContent:''}}</article>
+          </div>
+          <div v-if="index==bookeSize-1" class="conver">
+            <div>感谢阅读</div>
+            <img src="../assets/imgs/jihe.jpeg" alt="">
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</template>
+<script>
+import { reactive, toRefs } from "vue";
+
+export default {
+  setup(props, { emit }) {
+    const state = reactive({
+      lastTimeStamp: 0,
+      articleList: [],
+      active: 0,
+      dataSource: null,
+      zIndex: [],
+      palying: false,
+      icon: require("../assets/imgs/jihe.jpeg"),
+      bookeSize: 1,
+    });
+    const goDiary = () => {
+      emit("goDiary");
+    };
+
+    const filp = (index) => {
+      let newIndex = index;
+      setTimeout(() => {
+        state.zIndex[newIndex] = state.bookeSize - state.zIndex[newIndex];
+        state.palying = false;
+      }, 180);
+    };
+    const nextPage = (index) => {
+      // if (state.lastTimeStamp == 0) {
+      //   state.lastTimeStamp = new Date().getTime();
+      // }
+      let nowTimer = new Date().getTime();
+      if (nowTimer - state.lastTimeStamp < 500) {
+        // alert(nowTimer-state.lastTimeStamp)
+        return;
+      }
+
+      state.palying = true;
+      new filp(index);
+      // alert(index);
+      // goToPage(3);
+      state.active = state.active + 1;
+      state.lastTimeStamp = new Date().getTime();
+    };
+    const upPage = (index) => {
+      let nowTimer = new Date().getTime();
+      if (nowTimer - state.lastTimeStamp < 500) {
+        // alert(nowTimer-state.lastTimeStamp)
+        return;
+      }
+      new filp(index);
+      state.active = state.active - 1;
+      state.lastTimeStamp = new Date().getTime();
+    };
+    const goToPage = (page, i) => {
+      page = i == 1 ? page + 1 : page;
+
+      state.active = page;
+      setTimeout(() => {
+        for (let i = page - 1; i > 0; i--) {
+          state.zIndex[i] = state.bookeSize - state.zIndex[i];
+        }
+        state.zIndex[0] = 0;
+      }, 200);
+    };
+    const initPage = (data) => {
+      state.dataSource = data;
+      console.log(state.dataSource[0]);
+      state.bookeSize = Math.ceil(data.length / 2) + 2;
+      var result = [];
+      for (var i = 0; i < data.length; i += 2) {
+        result.push(data.slice(i, i + 2));
+      }
+      state.articleList = result;
+
+      for (let i = 0; i < state.bookeSize; i++) {
+        state.zIndex.push(state.bookeSize - i);
+      }
+    };
+
+    return { ...toRefs(state), upPage, goDiary, nextPage, goToPage, initPage };
+  },
+  mounted() {
+    // this.init();
+  },
+};
+</script>
+<style lang="less" scoped>
+.conver {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #54585b;
+
+  div {
+    flex: 1;
+    color: #ffffff;
+    size: 10px;
+    text-align: center;
+    font-size: 30px;
+    padding-top: 20px;
+  }
+  img {
+    flex: 1;
+    object-fit: cover;
+  }
+}
+.flipped {
+  transform: rotateY(-180deg);
+}
+.center {
+  transform: translateX(180px);
+}
+.center-back {
+  transform: translateX(360px);
+}
+.active {
+  z-index: 1;
+}
+.desktop {
+  // position: fixed;
+  // left: 0px;
+  // right: 0px;
+  // bottom: 0px;
+  // top: 0px;
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
+  // background: #000000;
+}
+.shadow {
+  box-shadow: 3px 0px 2px #dadada;
+}
+.book {
+  position: relative;
+  width: 360px;
+  height: 540px;
+  transition: all 0.5s;
+  perspective: 2000px;
+  border-radius: 0px 8px;
+
+  .book-page:nth-of-type(1) .front {
+    // box-shadow: 3px -1px 7px #000000;
+  }
+  .book-page:nth-of-type(1) .after {
+    box-shadow: -3px 0px 2px #dadada;
+  }
+  .book-page {
+    cursor: pointer;
+    position: absolute;
+    color: black;
+    width: 100%;
+    height: 100%;
+    transition: 0.5s transform;
+    transform-style: preserve-3d;
+    transform-origin: left center;
+  }
+  .catalogue {
+    height: 100%;
+    overflow-y: auto;
+    h3 {
+      padding: 20px;
+      text-align: center;
+    }
+    li:hover {
+      background: #000000;
+      color: #ffffff;
+    }
+    li {
+      // transition: all 0.6s;
+      display: flex;
+      font-size: 12px;
+      margin: 10px 0px;
+      padding: 2px 10px;
+      /* background: #ff0000; */
+      color: #000000;
+      span:nth-of-type(1) {
+      }
+      span:nth-of-type(2) {
+        overflow: hidden;
+        flex: 2;
+        margin: 0px 10px;
+      }
+      span:nth-of-type(3) {
+        width: 100px;
+      }
+      span {
+        display: inline;
+        // margin-right: 10px;
+      }
+    }
+  }
+  .content {
+    padding: 20px;
+    color: #000000;
+    font-size: 14px;
+  }
+  header {
+    font-size: 16px;
+    color: #000000;
+    text-align: center;
+  }
+  .date {
+    font-size: 12px;
+    color: #000000;
+  }
+  article {
+    overflow-y: auto;
+    padding: 10px 0px;
+  }
+  .front header {
+  }
+  .front,
+  .after {
+    background: linear-gradient(to right, #e6e6de, #fffff3);
+    backface-visibility: hidden;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transition: 0.5s transform;
+    box-sizing: border-box;
+  }
+  // overflow: hidden;
+}
+
+.after {
+  transform: rotateY(180deg);
+}
+.back {
+  transform: rotateY(180deg);
+}
+</style>

@@ -1,11 +1,7 @@
 <template>
   <div class="container">
-    <div
-      class="index-body"
-      :style="{
-        transform: 'translateX(' + (hideIndexPage ? clientWidth : 0) + 'px)',
-      }"
-    >
+    <div class="index-body" :style="{
+        transform: 'translateX(' + (hideIndexPage ? clientWidth : 0) + 'px)'}">
       <nav>
         <li @click="enterBlogPage">Blog</li>
         <li>联系我</li>
@@ -16,43 +12,49 @@
         <span>Heyo, I'm </span>
         <span>👋</span>
         <br />
-        <span @click="test"></span>
+        <span>欢迎来到这里</span>
       </div>
     </div>
-    <div
-      class="blog-body"
-      :style="{
+    <div class="blog-body" :style="{
         transform: 'translateX(' + (hideIndexPage ? 0 : -clientWidth) + 'px)',
-        display: hideBlogPage ? 'none' : 'block',
-      }"
-    >
-      <blogPage @goBack="goBack" />
+        display: hideBlogPage ? 'none' : 'block',}">
+      <blogPage @goDiary="goDiary" @goBack="goBack" />
+    </div>
+
+    <div @click="goDiary" :class="{'hide-diary-page':hideDiaryPage}" class="diary-body">
+      <diary ref="diaryRef" @goDiary="goDiary"></diary>
     </div>
   </div>
 </template>
 
 <script>
-import { reactive, toRefs } from "vue";
-
+import { reactive, toRefs,ref } from "vue";
+import diary from "./book-page.vue";
 import blogPage from "./blog-page.vue";
-import BlogPage from "./blog-page.vue";
 export default {
   setup() {
     let state = reactive({
       hideIndexPage: false,
       clientWidth: 0,
       hideBlogPage: true,
+      hideDiaryPage: true,
     });
+    　const diaryRef = ref();
     const enterBlogPage = () => {
       state.hideIndexPage = true;
     };
     const goBack = () => {
       state.hideIndexPage = false;
     };
-    return { ...toRefs(state), enterBlogPage, goBack };
+    const goDiary = (res) => {
+      diaryRef.value.initPage(res)
+      state.hideDiaryPage = !state.hideDiaryPage;
+    };
+    return { ...toRefs(state), goDiary, enterBlogPage, goBack ,diaryRef};
   },
   components: {
     blogPage,
+    diary,
   },
   created() {},
   mounted() {
@@ -65,19 +67,29 @@ export default {
     setTimeout(() => {
       that.hideBlogPage = false;
     }, 500);
-    // console.log(document.querySelector("#editor"));
 
-    // const editor = new Editor({
-    //   el: document.querySelector("#editor"),
-    //   height: "500px",
-    //   initialEditType: "markdown",
-    //   previewStyle: "vertical",
-    // });
   },
 };
 </script>
 
 <style lang="less" scoped>
+.diary-body {
+  position: fixed;
+  transform-origin: bottom left;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  top: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.5s;
+  background: #ffffff00;
+}
+.hide-diary-page {
+  transform: translateY(800px);
+  // background: #0003;
+}
 @keyframes wave-animation {
   0% {
     transform: rotate(0deg);
@@ -104,18 +116,16 @@ export default {
     transform: scale(1);
   }
 }
-.container {
-  overflow: hidden;
+.fixed-full {
   position: fixed;
   bottom: 0px;
   top: 0px;
   left: 0px;
   right: 0px;
 }
-.add {
-  transition: all 0.5s;
-}
 .container {
+  overflow: hidden;
+  .fixed-full;
   .blog-body {
     background: #923939;
     transform: translateX(-9000px);
@@ -128,56 +138,64 @@ export default {
     overflow: hidden;
     //  display: none;
   }
-}
-.index-body {
-  height: 100%;
-  transition: all 0.5s;
-  nav {
-    display: flex;
-    justify-content: center;
-    height: 132px;
-    align-items: center;
-    li {
-      cursor: pointer;
-      margin: 0px 50px;
-      font-size: 16px;
-      color: #4f4f4f;
-      text-shadow: 0px 2px 5px #0003;
+  .index-body {
+    height: 100%;
+    transition: all 0.5s;
+    nav {
+      display: flex;
+      justify-content: center;
+      height: 132px;
+      align-items: center;
+      li {
+        cursor: pointer;
+        margin: 0px 50px;
+        font-size: 16px;
+        color: #4f4f4f;
+        text-shadow: 0px 2px 5px #0003;
+      }
+    }
+    .blob1 {
+      transition: all 0.5s;
+      position: fixed;
+      top: 0px;
+      right: 0px;
+      width: 441px;
+      animation-name: blobAnimation;
+      animation-duration: 0.5s;
+      transform-origin: right top;
+    }
+    .blob2 {
+      position: fixed;
+      bottom: 0px;
+      left: 0px;
+      height: 432px;
+      animation-name: blobAnimation;
+      animation-duration: 0.5s;
+      transform-origin: left bottom;
+    }
+    .name span:nth-of-type(3) {
+      position: relative;
+      left: 100px;
+    }
+    .name {
+      width: 100%;
+      height: 100%;
+      font-size: 41px;
+      text-align: center;
+      position: relative;
+      left: -100px;
+      top: 70px;
+      color: #4b4b4b;
+    }
+    .name span:nth-of-type(2) {
+      transition: all 0.5s;
+      animation-name: wave-animation;
+      animation-duration: 0.5s;
+      display: inline-block;
     }
   }
-  .blob1 {
-    transition: all 0.5s;
-    position: fixed;
-    top: 0px;
-    right: 0px;
-    width: 441px;
-    animation-name: blobAnimation;
-    animation-duration: 0.5s;
-    transform-origin: right top;
-  }
-  .blob2 {
-    position: fixed;
-    bottom: 0px;
-    left: 0px;
-    height: 432px;
-    animation-name: blobAnimation;
-    animation-duration: 0.5s;
-    transform-origin: left bottom;
-  }
-  .name {
-    position: fixed;
-    top: 29%;
-    left: 26%;
-    font-size: 41px;
-    // animation-name: blobAnimation;
-    // animation-duration: 0.5s;
-    color: #4b4b4b;
-  }
-  .name span:nth-of-type(2) {
-    transition: all 0.5s;
-    animation-name: wave-animation;
-    animation-duration: 0.5s;
-    display: inline-block;
-  }
+}
+.add {
+  transition: all 0.5s;
 }
 </style>

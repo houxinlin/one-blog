@@ -12,7 +12,11 @@
       <div class="menu-list">
         <div class="menu-item">首页</div>
         <div class="menu-item">归档</div>
-        <div class="menu-item">日记</div>
+        <div class="menu-item">随手记</div>
+        <div @click="goDiary" class="menu-item">日记</div>
+        <div class="menu-item">
+          <a @click.stop href="/manager">管理</a>
+        </div>
       </div>
       <div class="site">
         <img src="../assets/imgs/github.svg" alt="" />
@@ -22,47 +26,26 @@
     </aside>
     <section>
       <nav>
-        <ul
-          :style="{
+        <div class="list" :style="{
             transform: hideAarticleList ? 'translateY(-50px)' : 'none',
-          }"
-        >
-          <li
-            @click="getListForType(1, item.classify)"
-            v-for="item in classify"
-            :key="item"
-          >
+          }">
+          <li @click="getListForType(1, item.classify)" v-for="item in classify" :key="item">
             {{ item.classify }}
           </li>
-        </ul>
-        <h2
-          @click="onArticleItemClick"
-          :style="{
+        </div>
+        <h2 @click="onArticleItemClick" :style="{
             transform: hideAarticleList ? 'translateY(0)' : 'translateY(50px)',
-          }"
-          class="article-title"
-        >
+          }" class="article-title">
           {{ currentBlogTitle }}
         </h2>
       </nav>
 
       <div class="container">
-        <div
-          :class="{ 'show-blog-viewer': hideAarticleList }"
-          class="blog-viewer"
-        >
+        <div :class="{ 'show-blog-viewer': hideAarticleList }" class="article-viewer">
           <div id="md"></div>
         </div>
-        <div
-          :class="{ 'hide-article-list': hideAarticleList }"
-          class="article-list"
-        >
-          <div
-            v-for="item in blogs"
-            :key="item"
-            @click="onArticleItemClick(item.id)"
-            class="article-item"
-          >
+        <div :class="{ 'hide-article-list': hideAarticleList }" class="article-list">
+          <div v-for="item in blogs" :key="item" @click="onArticleItemClick(item.id)" class="article-item">
             <header>
               <h3 class="title">{{ item.blogTitle }}</h3>
             </header>
@@ -76,13 +59,7 @@
               <span class="text">{{ item.createDate }}</span>
             </footer>
           </div>
-          <button
-          :class="{'select':currentPage==index}"
-            @click="getListForType(index, currentClassify)"
-            class="page-button"
-            v-for="index in pageSize"
-            :key="index"
-          >
+          <button :class="{ select: currentPage == index }" @click="getListForType(index, currentClassify)" class="page-button" v-for="index in pageSize" :key="index">
             {{ index }}
           </button>
         </div>
@@ -108,6 +85,7 @@ import {
   getListApi,
   getMarkdownContentApi,
   listClassifyApi,
+  listDiaryApi
 } from "../apis/blog";
 export default {
   mounted() {
@@ -122,7 +100,7 @@ export default {
       currentBlogTitle: "",
       pageSize: 0,
       currentClassify: "",
-      currentPage:1
+      currentPage: 1,
     });
     const goBack = () => {
       emit("goBack");
@@ -148,7 +126,7 @@ export default {
     };
     const getListForType = (page, type) => {
       state.currentClassify = type;
-      state.currentPage=page
+      state.currentPage = page;
       getListApi({ page: page, type: type }).then((res) => {
         state.blogs = res.data.data.records;
         state.pageSize = res.data.data.pages;
@@ -167,10 +145,16 @@ export default {
           state.pageSize = res.data.data.pages;
         });
     };
+    const goDiary = () => {
+      listDiaryApi().then((res) => {
+        emit("goDiary", res.data.data);
+      });
+    };
     return {
       ...toRefs(state),
       goBack,
       setBottomPage,
+      goDiary,
       init,
       onArticleItemClick,
       getListForType,
@@ -200,13 +184,20 @@ export default {
   border-radius: 1000px;
   opacity: 0;
 }
+.scale-view {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transition: all 0.3s;
+  overflow-y: auto;
+}
 
 .body {
   overflow: hidden;
   height: 100%;
   width: 100%;
   section {
-    padding: 20px;
+    padding: 20px 0px 0px 20px;
     background: #ffffff;
     padding-left: 350px;
     height: 100%;
@@ -214,22 +205,13 @@ export default {
       height: calc(100% - 101px);
       position: relative;
       margin-top: 61px;
-      .blog-viewer {
-        height: 100%;
-        transition: all 0.3s;
-        position: absolute;
+      .article-viewer {
         transform: scale(0);
-        width: 100%;
-        background: rgb(255, 255, 255);
-        overflow-y: auto;
+        background: #ffffff;
+        .scale-view;
       }
       .article-list {
-        width: 100%;
-        position: absolute;
-        transition: all 0.3s;
-        overflow-y: auto;
-        height: 100%;
-
+        .scale-view;
         button.select {
           background: #424242;
           color: #ffffff;
@@ -291,7 +273,7 @@ export default {
         color: #383838;
         font-size: 15px;
       }
-      ul {
+      .list {
         position: absolute;
         transition: all 0.5s;
         display: flex;
@@ -322,6 +304,7 @@ export default {
       color: #ffffff;
       .menu-item {
         margin: 20px 0px;
+        cursor: pointer;
       }
     }
     .background {

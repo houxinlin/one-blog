@@ -7,11 +7,14 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "@element-plus/icons": "^0.0.11",
     "@toast-ui/editor": "^3.1.0",
     "@toast-ui/editor-plugin-code-syntax-highlight": "^3.0.0",
     "@toast-ui/vue-editor": "^3.1.0",
     "axios": "^0.23.0",
     "core-js": "^3.6.5",
+    "element-plus": "^1.1.0-beta.24",
+    "element-ui": "^2.15.6",
     "prismjs": "^1.25.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
