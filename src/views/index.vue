@@ -9,7 +9,7 @@
       <img class="blob1" src="../assets/imgs/blob1.svg" alt="" />
       <img class="blob2" src="../assets/imgs/blob2.svg" alt="" />
       <div class="name">
-        <span>Heyo, I'm </span>
+        <span>Heyo, I'm HouXinLin </span>
         <span>👋</span>
         <br />
         <span>欢迎来到这里</span>
