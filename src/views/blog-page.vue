@@ -11,17 +11,19 @@
       </div>
       <div class="menu-list">
         <div class="menu-item">首页</div>
-        <div class="menu-item">归档</div>
-        <div class="menu-item">随手记</div>
+        <!-- <div class="menu-item">归档</div> -->
+        <div @click="listNote(1)" class="menu-item">随笔</div>
         <div @click="goDiary" class="menu-item">日记</div>
         <div class="menu-item">
-          <a @click.stop href="/manager">管理</a>
         </div>
       </div>
       <div class="site">
-        <img src="../assets/imgs/github.svg" alt="" />
-        <img src="../assets/imgs/juejin.svg" alt="" />
-        <img src="../assets/imgs/weichat.svg" alt="" />
+        <a target="_blank" href="https://github.com/houxinlin">
+          <img src="../assets/imgs/github.svg" alt="" />
+        </a>
+        <a target="_blank" href="https://juejin.cn/user/588993963758215/posts">
+          <img src="../assets/imgs/juejin.svg" alt="" />
+        </a>
       </div>
     </aside>
     <section>
@@ -85,7 +87,8 @@ import {
   getListApi,
   getMarkdownContentApi,
   listClassifyApi,
-  listDiaryApi
+  listDiaryApi,
+  noteApi,
 } from "../apis/blog";
 export default {
   mounted() {
@@ -95,13 +98,16 @@ export default {
   setup(props, { emit }) {
     const state = reactive({
       hideAarticleList: false,
-      blogs: [1, 2, 4],
+      blogs: [],
       classify: [],
       currentBlogTitle: "",
       pageSize: 0,
       currentClassify: "",
       currentPage: 1,
     });
+    const listNote = (page) => {
+      getListForType(page, "随手记");
+    };
     const goBack = () => {
       emit("goBack");
     };
@@ -153,6 +159,7 @@ export default {
     return {
       ...toRefs(state),
       goBack,
+      listNote,
       setBottomPage,
       goDiary,
       init,

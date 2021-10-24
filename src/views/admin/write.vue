@@ -62,6 +62,8 @@ export default {
         classifyId: state.type,
         blogDescribe: state.desc,
       };
+      alert(body.markdownContent)
+      // return
       const loading = ElLoading.service({
         lock: true,
         text: "发布中",

@@ -1,8 +1,6 @@
 <template>
   <div class="desktop">
-
     <div :class="{'shadow':active<bookeSize-1,'center':active>0 &&active<=bookeSize-1,'center-back':active==bookeSize}" class="book">
-
       <div :style="{'z-index':zIndex[index]}" :class="{'active':active==index,'flipped':active>index}" v-for="(item,index) in bookeSize " :key="index" class="book-page">
         <div v-on:click.stop="nextPage(index)" class="front">
           <div v-if="index==0" class="conver">
@@ -12,27 +10,35 @@
           <div v-if="index>=1 && index <bookeSize-1" class="content">
             <header>{{articleList[index-1][0].blogTitle}}</header>
             <div class="date">{{articleList[index-1][0].createDate}}</div>
-            <article>{{articleList[index-1][0].markdownContent}}</article>
+            <el-scrollbar height="400px">
+              <article>{{articleList[index-1][0].markdownContent}}</article>
+            </el-scrollbar>
           </div>
         </div>
         <div @click.stop="upPage(index)" class="after">
           <div class="catalogue" v-if="index==0">
             <h3>目录</h3>
             <div>
-              <template v-for="(item ,i) in articleList" :key="item.id">
-                <li @click.stop="goToPage(i+1,it)" v-for="(el ,it) in item" :key="el.id">
+              <el-scrollbar height="400px">
+                <template v-for="(item ,i) in articleList" :key="item.id">
+                  <li @click.stop="goToPage(i+1,it)" v-for="(el ,it) in item" :key="el.id">
 
-                  <span>{{el.blogTitle}}</span>
-                  <span>...........................................................</span>
-                  <span><span>{{(i*2+it)+1}}</span></span>
-                </li>
-              </template>
+                    <span>{{el.blogTitle}}</span>
+                    <span>...........................................................</span>
+                    <span><span>{{(i*2+it)+1}}</span></span>
+                  </li>
+                </template>
+              </el-scrollbar>
+
             </div>
           </div>
           <div v-if="index>=1 && index <bookeSize-1" class="content">
             <header>{{articleList[index-1].length>1?articleList[index-1][1].blogTitle:''}}</header>
             <div class="date">{{articleList[index-1].length>1?articleList[index-1][1].createDate:''}}</div>
-            <article>{{articleList[index-1].length>1?articleList[index-1][1].markdownContent:''}}</article>
+
+            <el-scrollbar height="400px">
+              <article>{{articleList[index-1].length>1?articleList[index-1][1].markdownContent:''}}</article>
+            </el-scrollbar>
           </div>
           <div v-if="index==bookeSize-1" class="conver">
             <div>感谢阅读</div>
@@ -109,8 +115,10 @@ export default {
       }, 200);
     };
     const initPage = (data) => {
+      state.palying = false;
       state.dataSource = data;
-      console.log(state.dataSource[0]);
+      state.active = 0;
+      state.zIndex.length = 0;
       state.bookeSize = Math.ceil(data.length / 2) + 2;
       var result = [];
       for (var i = 0; i < data.length; i += 2) {
@@ -251,8 +259,14 @@ export default {
   }
   article {
     overflow-y: auto;
+    white-space: pre-wrap;
     padding: 10px 0px;
+    font-size: 12px;
+    color: #000000;
+    text-indent: 2rem;
+    // height: 450px;
   }
+
   .front header {
   }
   .front,

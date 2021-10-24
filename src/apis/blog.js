@@ -5,6 +5,13 @@ export function listDiaryApi() {
     method: 'get',
   })
 }
+export function noteApi(data){
+  return axios({
+    url: '/api/blog/note',
+    method: 'get',
+    params:data
+  }) 
+}
 export function getListApi(data) {
   return axios({
     url: '/api/blog/list',
