@@ -72,7 +72,6 @@ export default {
       palying: false,
       icon: require("../assets/imgs/jihe.jpeg"),
       bookeSize: 1,
-      lastClickTimeStamp: 0,
     });
     const closePage = () => {
       emit("close");
@@ -80,7 +79,7 @@ export default {
 
     const handlerPage = (index) => {
       let nowTimer = new Date().getTime();
-      if (nowTimer - state.lastTimeStamp < 510) {
+      if (nowTimer - state.lastTimeStamp < 50) {
         return;
       }
       if (!state.stateMap.get(index) || false) {
@@ -111,31 +110,36 @@ export default {
     };
     const goToPage = (page, i) => {
       page = i == 1 ? page + 1 : page;
+      console.log(page);
+      state.stateMap.clear();
+      for (let i = 0; i < page; i++) {
+        state.stateMap.set(i, true);
+      }
       state.active = page;
       setTimeout(() => {
-        for (let i = page - 1; i > 0; i--) {
-          state.zIndex[i] = state.bookeSize - state.zIndex[i];
+        for (let i = 0; i < page; i++) {
+          state.zIndex[i] = i + 1;
         }
-        state.zIndex[0] = 0;
+        // state.zIndex[0] = 0;
       }, 200);
     };
     const goHome = () => {
       state.active = 1;
       state.stateMap.clear();
-      state.stateMap.set(0,true)
+      state.stateMap.set(0, true);
       setTimeout(() => {
         for (let i = state.bookeSize - 1; i > 0; i--) {
           console.log(i);
-          state.zIndex[i] = (state.bookeSize - i );
+          state.zIndex[i] = state.bookeSize - i;
         }
         state.zIndex[0] = 1;
       }, 200);
     };
     const initPage = (data) => {
-      state.palying = false;
       state.dataSource = data;
       state.active = 0;
       state.zIndex.length = 0;
+      state.stateMap.clear();
       state.bookeSize = Math.ceil(data.length / 2) + 2;
       var result = [];
       for (var i = 0; i < data.length; i += 2) {
@@ -233,8 +237,8 @@ export default {
     transform-style: preserve-3d;
     transform-origin: left center;
   }
-  .book-page:nth-of-type(1){
-    .opt{
+  .book-page:nth-of-type(1) {
+    .opt {
       color: #90989e;
     }
   }
@@ -269,7 +273,6 @@ export default {
       }
       span {
         display: inline;
-        // margin-right: 10px;
       }
     }
   }
@@ -294,7 +297,6 @@ export default {
     font-size: 12px;
     color: #000000;
     text-indent: 2rem;
-    // height: 450px;
   }
 
   .front {
@@ -305,7 +307,13 @@ export default {
       color: #000000;
       display: flex;
       .iconfont {
-        margin-right: 5px;
+        padding: 8px;
+        color: #0c13202e;
+        font-size: 15px;
+      }
+      .iconfont:hover {
+        background: #f4f4f4;
+        border-radius: 2px;
       }
     }
   }
