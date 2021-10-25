@@ -1,13 +1,19 @@
 <template>
   <div class="desktop">
     <div :class="{'shadow':active<bookeSize-1,'center':active>0 &&active<=bookeSize-1,'center-back':active==bookeSize}" class="book">
-      <div :style="{'z-index':zIndex[index]}" :class="{'active':active==index,'flipped':active>index}" v-for="(item,index) in bookeSize " :key="index" class="book-page">
-        <div v-on:click.stop="nextPage(index)" class="front">
+      <div @click.stop="handlerPage(index)" :style="{'z-index':zIndex[index]}" :class="{'active':active==index,'flipped':active>index}" v-for="(item,index) in bookeSize " :key="index" class="book-page">
+        <div class="front">
+          <div class="opt">
+            <div class="iconfont icon-tuichu" @click.stop="closePage()"></div>
+            <div class="iconfont icon-shouye" @click.stop="goHome()"></div>
+          </div>
+
           <div v-if="index==0" class="conver">
-            <div>日记本</div>
+            <div>日记本 </div>
             <img src="../assets/imgs/jihe.jpeg" alt="">
           </div>
           <div v-if="index>=1 && index <bookeSize-1" class="content">
+
             <header>{{articleList[index-1][0].blogTitle}}</header>
             <div class="date">{{articleList[index-1][0].createDate}}</div>
             <el-scrollbar height="400px">
@@ -15,7 +21,7 @@
             </el-scrollbar>
           </div>
         </div>
-        <div @click.stop="upPage(index)" class="after">
+        <div class="after">
           <div class="catalogue" v-if="index==0">
             <h3>目录</h3>
             <div>
@@ -53,6 +59,7 @@
 <script>
 import { reactive, toRefs } from "vue";
 
+import "../assets/font/font-icon/book/iconfont.css";
 export default {
   setup(props, { emit }) {
     const state = reactive({
@@ -61,57 +68,67 @@ export default {
       active: 0,
       dataSource: null,
       zIndex: [],
+      stateMap: new Map(),
       palying: false,
       icon: require("../assets/imgs/jihe.jpeg"),
       bookeSize: 1,
+      lastClickTimeStamp: 0,
     });
-    const goDiary = () => {
-      emit("goDiary");
+    const closePage = () => {
+      emit("close");
     };
 
-    const filp = (index) => {
-      let newIndex = index;
-      setTimeout(() => {
-        state.zIndex[newIndex] = state.bookeSize - state.zIndex[newIndex];
-        state.palying = false;
-      }, 180);
-    };
-    const nextPage = (index) => {
-      // if (state.lastTimeStamp == 0) {
-      //   state.lastTimeStamp = new Date().getTime();
-      // }
+    const handlerPage = (index) => {
       let nowTimer = new Date().getTime();
-      if (nowTimer - state.lastTimeStamp < 500) {
-        // alert(nowTimer-state.lastTimeStamp)
+      if (nowTimer - state.lastTimeStamp < 510) {
+        return;
+      }
+      if (!state.stateMap.get(index) || false) {
+        nextPage(index);
+        state.stateMap.set(index, true);
         return;
       }
 
+      upPage(index);
+      state.stateMap.set(index, false);
+    };
+    const filp = (index) => {
+      setTimeout(() => {
+        let newIndex = index;
+        state.zIndex[newIndex] = state.bookeSize - state.zIndex[newIndex] + 1;
+      }, 150);
+    };
+    const nextPage = (index) => {
       state.palying = true;
       new filp(index);
-      // alert(index);
-      // goToPage(3);
       state.active = state.active + 1;
       state.lastTimeStamp = new Date().getTime();
     };
     const upPage = (index) => {
-      let nowTimer = new Date().getTime();
-      if (nowTimer - state.lastTimeStamp < 500) {
-        // alert(nowTimer-state.lastTimeStamp)
-        return;
-      }
       new filp(index);
       state.active = state.active - 1;
       state.lastTimeStamp = new Date().getTime();
     };
     const goToPage = (page, i) => {
       page = i == 1 ? page + 1 : page;
-
       state.active = page;
       setTimeout(() => {
         for (let i = page - 1; i > 0; i--) {
           state.zIndex[i] = state.bookeSize - state.zIndex[i];
         }
         state.zIndex[0] = 0;
+      }, 200);
+    };
+    const goHome = () => {
+      state.active = 1;
+      state.stateMap.clear();
+      state.stateMap.set(0,true)
+      setTimeout(() => {
+        for (let i = state.bookeSize - 1; i > 0; i--) {
+          console.log(i);
+          state.zIndex[i] = (state.bookeSize - i );
+        }
+        state.zIndex[0] = 1;
       }, 200);
     };
     const initPage = (data) => {
@@ -131,7 +148,16 @@ export default {
       }
     };
 
-    return { ...toRefs(state), upPage, goDiary, nextPage, goToPage, initPage };
+    return {
+      ...toRefs(state),
+      upPage,
+      goHome,
+      handlerPage,
+      closePage,
+      nextPage,
+      goToPage,
+      initPage,
+    };
   },
   mounted() {
     // this.init();
@@ -168,7 +194,6 @@ export default {
   transform: translateX(360px);
 }
 .active {
-  z-index: 1;
 }
 .desktop {
   // position: fixed;
@@ -207,6 +232,11 @@ export default {
     transition: 0.5s transform;
     transform-style: preserve-3d;
     transform-origin: left center;
+  }
+  .book-page:nth-of-type(1){
+    .opt{
+      color: #90989e;
+    }
   }
   .catalogue {
     height: 100%;
@@ -267,7 +297,17 @@ export default {
     // height: 450px;
   }
 
-  .front header {
+  .front {
+    .opt {
+      position: absolute;
+      right: 10px;
+      top: 4px;
+      color: #000000;
+      display: flex;
+      .iconfont {
+        margin-right: 5px;
+      }
+    }
   }
   .front,
   .after {

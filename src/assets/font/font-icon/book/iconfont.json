@@ -1,0 +1,23 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "11399523",
+      "name": "退出",
+      "font_class": "tuichu",
+      "unicode": "e62e",
+      "unicode_decimal": 58926
+    },
+    {
+      "icon_id": "24940503",
+      "name": "首页 ",
+      "font_class": "shouye",
+      "unicode": "e618",
+      "unicode_decimal": 58904
+    }
+  ]
+}

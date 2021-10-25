@@ -18,11 +18,11 @@
     <div class="blog-body" :style="{
         transform: 'translateX(' + (hideIndexPage ? 0 : -clientWidth) + 'px)',
         display: hideBlogPage ? 'none' : 'block',}">
-      <blogPage @goDiary="goDiary" @goBack="goBack" />
+      <blogPage  @goDiary="goDiary" @goBack="goBack" />
     </div>
 
-    <div @click="goDiary" :class="{'hide-diary-page':hideDiaryPage}" class="diary-body">
-      <diary ref="diaryRef" @goDiary="goDiary"></diary>
+    <div  :class="{'hide-diary-page':hideDiaryPage}" class="diary-body">
+      <diary @close="clseDiary" ref="diaryRef" @goDiary="goDiary"></diary>
     </div>
   </div>
 </template>
@@ -50,7 +50,10 @@ export default {
       diaryRef.value.initPage(res)
       state.hideDiaryPage = !state.hideDiaryPage;
     };
-    return { ...toRefs(state), goDiary, enterBlogPage, goBack ,diaryRef};
+    const clseDiary=()=>{
+      state.hideDiaryPage=true
+    }
+    return { ...toRefs(state), clseDiary,goDiary, enterBlogPage, goBack ,diaryRef};
   },
   components: {
     blogPage,
