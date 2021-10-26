@@ -9,7 +9,7 @@
           </div>
 
           <div v-if="index==0" class="conver">
-            <div>日记本 </div>
+            <div> </div>
             <img src="../assets/imgs/jihe.jpeg" alt="">
           </div>
           <div v-if="index>=1 && index <bookeSize-1" class="content">
@@ -59,7 +59,8 @@
 <script>
 import { reactive, toRefs } from "vue";
 
-import "../assets/font/font-icon/book/iconfont.css";
+import "../assets/font/font-icon/iconfont.css";
+
 export default {
   setup(props, { emit }) {
     const state = reactive({
@@ -168,20 +169,23 @@ export default {
   },
 };
 </script>
+
+
 <style lang="less" scoped>
 .conver {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #54585b;
+  background: #30374a;
 
   div {
     flex: 1;
     color: #ffffff;
     size: 10px;
     text-align: center;
-    font-size: 30px;
-    padding-top: 20px;
+  }
+  .line{
+
   }
   img {
     flex: 1;
@@ -237,9 +241,12 @@ export default {
     transform-style: preserve-3d;
     transform-origin: left center;
   }
-  .book-page:nth-of-type(1) {
+  .book-page:nth-of-type(1)   {
     .opt {
-      color: #90989e;
+      .iconfont{
+      color: #ffffff  !important;
+
+      }
     }
   }
   .catalogue {
@@ -308,12 +315,12 @@ export default {
       display: flex;
       .iconfont {
         padding: 8px;
-        color: #0c13202e;
+        color: #000000;
         font-size: 15px;
       }
       .iconfont:hover {
-        background: #f4f4f4;
-        border-radius: 2px;
+        // background: #f4f4f4;
+        // border-radius: 2px;
       }
     }
   }

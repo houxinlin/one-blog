@@ -6,25 +6,39 @@
   "description": "",
   "glyphs": [
     {
-      "icon_id": "7141689",
-      "name": "github",
-      "font_class": "github",
-      "unicode": "e632",
-      "unicode_decimal": 58930
-    },
-    {
-      "icon_id": "8797986",
-      "name": "浏览",
-      "font_class": "liulan",
-      "unicode": "e7d0",
-      "unicode_decimal": 59344
-    },
-    {
-      "icon_id": "17292022",
+      "icon_id": "1301369",
       "name": "日期",
       "font_class": "riqi",
-      "unicode": "e646",
-      "unicode_decimal": 58950
+      "unicode": "e65e",
+      "unicode_decimal": 58974
+    },
+    {
+      "icon_id": "3996617",
+      "name": "返回",
+      "font_class": "fanhui",
+      "unicode": "e641",
+      "unicode_decimal": 58945
+    },
+    {
+      "icon_id": "6569566",
+      "name": "浏览",
+      "font_class": "liulan",
+      "unicode": "e68b",
+      "unicode_decimal": 59019
+    },
+    {
+      "icon_id": "11399523",
+      "name": "退出",
+      "font_class": "tuichu",
+      "unicode": "e62e",
+      "unicode_decimal": 58926
+    },
+    {
+      "icon_id": "24940503",
+      "name": "首页 ",
+      "font_class": "shouye",
+      "unicode": "e618",
+      "unicode_decimal": 58904
     }
   ]
 }

@@ -10,10 +10,10 @@
         <span class="title">HouXinLin Blog</span>
       </div>
       <div class="menu-list">
-        <div class="menu-item">首页</div>
+        <div @click="indexPage()" class="menu-item">首页</div>
         <!-- <div class="menu-item">归档</div> -->
         <div @click="listNote(1)" class="menu-item">随笔</div>
-        <div @click="goDiary" class="menu-item">日记</div>
+        <div @click="goDiary()" class="menu-item">日记</div>
         <div class="menu-item">
         </div>
       </div>
@@ -29,17 +29,21 @@
     <section>
       <nav>
         <div class="list" :style="{
-            transform: hideAarticleList ? 'translateY(-50px)' : 'none',
+            transform: hideNavBar ? 'translateY(-50px)' : 'none',
           }">
-          <li @click="getListForType(1, item.classify)" v-for="item in classify" :key="item">
+          <li @click="listByType(1, item.classify,index)" v-for="(item ,index) in classify" :key="item" :class="{'select':currentNavIndex==index}">
             {{ item.classify }}
           </li>
         </div>
-        <h2 @click="onArticleItemClick" :style="{
-            transform: hideAarticleList ? 'translateY(0)' : 'translateY(50px)',
-          }" class="article-title">
-          {{ currentBlogTitle }}
-        </h2>
+        <div :style="{
+            transform: showTitle ? 'translateY(0)' : 'translateY(50px)',
+          }" @click="onHideArticleList" class="bottom-title" style="display:flex">
+          <h2 class="article-title">
+            {{ currentBlogTitle }}
+          </h2>
+          <div v-if="hideAarticleList" class="iconfont icon-fanhui"></div>
+
+        </div>
       </nav>
 
       <div class="container">
@@ -61,7 +65,7 @@
               <span class="text">{{ item.createDate }}</span>
             </footer>
           </div>
-          <button :class="{ select: currentPage == index }" @click="getListForType(index, currentClassify)" class="page-button" v-for="index in pageSize" :key="index">
+          <button :class="{ select: currentPage == index }" @click="listByType(index, currentClassify,currentNavIndex)" class="page-button" v-for="index in pageSize" :key="index">
             {{ index }}
           </button>
         </div>
@@ -93,7 +97,7 @@ import {
 export default {
   mounted() {
     this.init();
-    // this.getListForType(1, "Java");
+    // this.listByType(1, "Java");
   },
   setup(props, { emit }) {
     const state = reactive({
@@ -103,24 +107,35 @@ export default {
       currentBlogTitle: "",
       pageSize: 0,
       currentClassify: "",
+      showTitle: false,
       currentPage: 1,
+      currentNavIndex: 0,
+      hideNavBar: false,
     });
     const listNote = (page) => {
-      getListForType(page, "随手记");
+      reset();
+      state.showTitle = true;
+      state.hideNavBar = true;
+      state.currentBlogTitle = "随笔";
+      listByType(page, "随笔", 0);
     };
     const goBack = () => {
       emit("goBack");
     };
     const onArticleItemClick = (id) => {
       getBlogContent(id);
-      state.hideAarticleList = !state.hideAarticleList;
     };
+    /**
+     * 获取博客内容
+     */
     const getBlogContent = (id) => {
       getMarkdownContentApi({ id: id }).then((res) => {
         const value = res.data.data.markdownContent;
         state.currentBlogTitle = res.data.data.blogTitle;
         // state.hideAarticleList = !state.hideAarticleList;
-
+        /**
+         * 博客预览
+         */
         const editor = new Viewer({
           el: document.querySelector("#md"),
           previewStyle: "vertical",
@@ -128,9 +143,16 @@ export default {
           plugins: [[codeSyntaxHighlight, { highlighter: Prism }]],
           initialValue: value,
         });
+        state.showTitle = true;
+        state.hideNavBar = true;
+        state.hideAarticleList = !state.hideAarticleList;
       });
     };
-    const getListForType = (page, type) => {
+    /**
+     * 根据类型、页获取数据
+     */
+    const listByType = (page, type, navIndex) => {
+      state.currentNavIndex = navIndex;
       state.currentClassify = type;
       state.currentPage = page;
       getListApi({ page: page, type: type }).then((res) => {
@@ -139,6 +161,9 @@ export default {
       });
     };
     const setBottomPage = () => {};
+    /**
+     * 初始化
+     */
     const init = () => {
       listClassifyApi()
         .then((res) => {
@@ -151,20 +176,42 @@ export default {
           state.pageSize = res.data.data.pages;
         });
     };
+    const reset = () => {
+      state.showTitle = false;
+      state.hideAarticleList = false
+      state.hideNavBar = false;
+    };
+    const onShowArticleList = () => {
+      reset();
+    };
+    const onHideArticleList = () => {
+      if (state.hideAarticleList) {
+        reset();
+      }
+    };
     const goDiary = () => {
       listDiaryApi().then((res) => {
         emit("goDiary", res.data.data);
       });
     };
+    const indexPage = () => {
+      state.showTitle = false;
+      state.hideAarticleList = false;
+      state.hideNavBar = false;
+      listByType(1, state.classify[0].classify, 0);
+    };
     return {
       ...toRefs(state),
       goBack,
+      onShowArticleList,
       listNote,
+      indexPage,
       setBottomPage,
       goDiary,
+      onHideArticleList,
       init,
       onArticleItemClick,
-      getListForType,
+      listByType,
     };
   },
 };
@@ -274,9 +321,12 @@ export default {
       display: flex;
       align-items: center;
       overflow: hidden;
-      .article-title {
+      .bottom-title {
         transition: all 0.5s;
         transform: translateY(50px);
+      }
+      .article-title {
+        margin-right: 10px;
         color: #383838;
         font-size: 15px;
       }
@@ -285,6 +335,7 @@ export default {
         transition: all 0.5s;
         display: flex;
         align-items: center;
+        height: 100%;
         li:nth-of-type(1) {
           margin-left: 0px;
         }
@@ -294,6 +345,12 @@ export default {
         li {
           margin: 0 20px;
           cursor: pointer;
+          display: flex;
+          align-items: center;
+        }
+        li.select {
+          border-bottom: 2px #000000 solid;
+          height: 100%;
         }
       }
     }

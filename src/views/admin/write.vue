@@ -62,7 +62,6 @@ export default {
         classifyId: state.type,
         blogDescribe: state.desc,
       };
-      alert(body.markdownContent)
       // return
       const loading = ElLoading.service({
         lock: true,
@@ -77,6 +76,9 @@ export default {
           message: "发布成功",
           type: "success",
         });
+        state.type=""
+        state.desc="";
+        state.title=""
       });
     };
     return { ...toRefs(state), onSubmit };
