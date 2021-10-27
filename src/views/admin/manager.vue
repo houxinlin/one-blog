@@ -3,7 +3,6 @@
 
     <el-aside>
       <v-sidebar />
-
     </el-aside>
     <el-main>
       <router-view>
@@ -37,13 +36,16 @@ export default {
 <style lang="less" scoped>
 .content-box {
 }
-.el-aside{
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    bottom: 0px;
+.el-aside {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  width: 12rem;
+  background: #ffffff;
+  box-shadow:2px 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
-.el-main{
-    padding-left: 300px;
+.el-main {
+  padding-left: 13rem;
 }
 </style>

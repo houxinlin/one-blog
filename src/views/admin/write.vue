@@ -1,6 +1,6 @@
 <template>
   <div id="markdown"></div>
-  <el-form ref="form" label-width="120px">
+  <el-form ref="form" >
     <el-form-item label="标题">
       <el-input value="asd" v-model="title"></el-input>
     </el-form-item>
@@ -85,3 +85,9 @@ export default {
   },
 };
 </script>,
+
+<style lang="less" scoped>
+#markdown{
+  margin-bottom: 10px;
+}
+</style>

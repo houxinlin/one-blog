@@ -14,6 +14,9 @@
         <!-- <div class="menu-item">归档</div> -->
         <div @click="listNote(1)" class="menu-item">随笔</div>
         <div @click="goDiary()" class="menu-item">日记</div>
+        <a href="/manager">
+            <div class="menu-item">管理</div>
+        </a>
         <div class="menu-item">
         </div>
       </div>

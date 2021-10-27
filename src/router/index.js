@@ -1,36 +1,82 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import Index from '../views/index.vue'
-import Index2 from '../views/book-page.vue'
-import manage from '../views/admin/manager.vue'
-import write from '../views/admin/write.vue'
-const writePage = resolve => require.ensure([], () => resolve(index), 'list');
-const routes = [
-  {
-    path: '/',
-    name: 'Index',
-    component:  () => import ( /* webpackChunkName: "index" */ "../views/index.vue")
+import { createRouter, createWebHistory } from "vue-router";
 
-    // children: [{
-		// 	path: '/write',
-		// 	component: write,
-		// 	meta: [],
-		// }]
+const constantRoutes = [
+  {
+    path: "/",
+    name: "Index",
+    component: () =>
+      import(/* webpackChunkName: "index" */ "../views/index.vue"),
+  },
+
+  {
+    path: "/login",
+    name: "Login",
+    component: () =>
+      import(/* webpackChunkName: "login" */ "../views/admin/login.vue"),
   },
   {
-    path: '/manager',
-    name: 'Manager',
-    component:  () => import ( /* webpackChunkName: "manager" */ "../views/admin/manager.vue"),
-    children: [{
-			path: '/write',
-			component:  () => import ( /* webpackChunkName: "write" */ "../views/admin/write.vue"),
-			meta: [],
-		}]
-  }
-]
+    path: "/manager",
+    name: "Manager",
+    meta: {
+      login: true,
+    },
+    component: () =>
+      import(/* webpackChunkName: "manager" */ "../views/admin/manager.vue"),
+    children: [
+      {
+        path: "/article",
+        component: () =>
+          import(
+            /* webpackChunkName: "article" */ "../views/admin/article.vue"
+          ),
+        meta: {
+          login: true,
+        },
+      },
+      {
+        path: "/setting",
+        name: "Setting",
+        component: () =>
+          import(
+            /* webpackChunkName: "Setting" */ "../views/admin/setting.vue"
+          ),
+      },
+      {
+        path: "/write",
+        component: () =>
+          import(/* webpackChunkName: "write" */ "../views/admin/write.vue"),
+        meta: {
+          login: true,
+        },
+      },
+      {
+        path: "/browseRecord",
+        component: () =>
+          import(
+            /* webpackChunkName: "browseRecord" */ "../views/admin/browseRecord.vue"
+          ),
+        meta: {
+          login: true,
+        },
+      },
+    ],
+  },
+];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes
-})
-
-export default router
+  routes: constantRoutes,
+});
+router.beforeEach((to, from, next) => {
+  //如果没有登陆
+  if (to.meta.login) {
+    if (sessionStorage.getItem("login")) {
+      next();
+    } else {
+      next({ path: "/login" });
+    }
+  } else {
+    next();
+  }
+});
+export default router;

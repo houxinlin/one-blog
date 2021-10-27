@@ -35,7 +35,7 @@ export function listClassifyApi() {
 
 export function addBlogApi(data) {
   return axios({
-    url: '/api/blog/add',
+    url: '/api/admin/add',
     method: 'post',
     data:data
   })
