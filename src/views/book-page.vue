@@ -181,11 +181,11 @@ export default {
   div {
     flex: 1;
     color: #ffffff;
-    size: 10px;
+    font-size: 15px;
     text-align: center;
+    margin-top: 10px;
   }
-  .line{
-
+  .line {
   }
   img {
     flex: 1;
@@ -241,11 +241,10 @@ export default {
     transform-style: preserve-3d;
     transform-origin: left center;
   }
-  .book-page:nth-of-type(1)   {
+  .book-page:nth-of-type(1) {
     .opt {
-      .iconfont{
-      color: #ffffff  !important;
-
+      .iconfont {
+        color: #ffffff !important;
       }
     }
   }
@@ -326,7 +325,7 @@ export default {
   }
   .front,
   .after {
-    background: linear-gradient(to right, #e6e6de, #fffff3);
+    background: linear-gradient(to right, #ffffff, #f8f8f8);
     backface-visibility: hidden;
     width: 100%;
     height: 100%;

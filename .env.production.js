@@ -1,1 +1,0 @@
-VUE_APP_REQUEST_URL = 'http://localhost:5880/'

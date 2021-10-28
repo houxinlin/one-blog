@@ -7,13 +7,13 @@
     <el-table-column prop="classifyId" label="分类" />
     <el-table-column prop="address" label="操作">
       <template #default="scope">
-        <el-popconfirm confirm-button-text="删除" cancel-button-text="取消" icon="el-icon-info" icon-color="red" title="是否确定删除?" @confirm="confirmDeleteEvent( scope.$index, scope.row.id,)" @cancel="cancelEvent">
+        <el-popconfirm confirm-button-text="删除" cancel-button-text="取消" icon="el-icon-info" icon-color="red" title="是否确定删除?" @confirm="confirmDeleteEvent( scope.$index, scope.row.id)" @cancel="cancelEvent">
           <template #reference>
             <el-button type="danger">删除</el-button>
           </template>
         </el-popconfirm>
 
-        <el-button type="text" size="small">编辑</el-button>
+        <el-button @click="editArticle(scope.$index, scope.row.id)" type="success">编辑</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -24,7 +24,8 @@
 <script>
 import { reactive, toRefs } from "vue";
 import { getListApi } from "../../apis/blog";
-
+// import codeSyntaxHighlight from "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js";
+import router from "../../router/index";
 import { deleteArticleApi } from "../../apis/admin";
 import { ElMessage } from "element-plus";
 export default {
@@ -52,7 +53,7 @@ export default {
       console.log(`${val} items per page`);
     };
     const handleCurrentChange = (val) => {
-      listBlog("",val);
+      listBlog("", val);
     };
     const state = reactive({
       listBlogs: [],
@@ -60,8 +61,15 @@ export default {
       blogTotal: 0,
       pageSize: 0,
     });
+    const editArticle=(index,id)=>{
+        router.push({
+          path:"/write",
+          query:{"id":id}
+        })
+    }
     return {
       ...toRefs(state),
+      editArticle,
       handleSizeChange,
       handleCurrentChange,
       listBlog,

@@ -74,7 +74,6 @@
         </div>
       </div>
     </section>
-    <div @click="goBack" class="return"></div>
   </div>
 </template>
 
@@ -231,16 +230,7 @@ export default {
 #md {
   width: 70%;
 }
-.return {
-  position: fixed;
-  top: 0px;
-  right: -800px;
-  background: #00000014;
-  bottom: 0px;
-  width: 900px;
-  border-radius: 1000px;
-  opacity: 0;
-}
+
 .scale-view {
   width: 100%;
   height: 100%;

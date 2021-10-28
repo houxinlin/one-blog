@@ -3,7 +3,7 @@
     <div class="summary">
       <el-card class="box-card">
         <div class="item">
-          <img src="../../assets/svg/total.svg" alt="">
+          <img src="../../assets/imgs/total.svg" alt="">
           <div>
             <div>浏览总数</div>
             <div>{{dashboardMap.total_visit}}</div>
@@ -12,7 +12,7 @@
       </el-card>
       <el-card class="box-card">
         <div class="item">
-          <img src="../../assets/svg/blog.svg" alt="">
+          <img src="../../assets/imgs/blog.svg" alt="">
           <div>
             <div>文章总数</div>
             <div>{{dashboardMap.blog_count}}</div>
@@ -21,7 +21,7 @@
       </el-card>
       <el-card class="box-card">
         <div class="item">
-          <img src="../../assets/svg/today.svg" alt="">
+          <img src="../../assets/imgs/today.svg" alt="">
           <div>
             <div>今日浏览</div>
             <div>{{dashboardMap.today_count}}</div>

@@ -41,11 +41,11 @@ export default {
   top: 0px;
   left: 0px;
   bottom: 0px;
-  width: 12rem;
+  width: 200px;
   background: #ffffff;
   box-shadow:2px 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
 .el-main {
-  padding-left: 13rem;
+  padding-left: 210px;
 }
 </style>

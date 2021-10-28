@@ -18,17 +18,17 @@
     <div class="blog-body" :style="{
         transform: 'translateX(' + (hideIndexPage ? 0 : -clientWidth) + 'px)',
         display: hideBlogPage ? 'none' : 'block',}">
-      <blogPage  @goDiary="goDiary" @goBack="goBack" />
+      <blogPage @goDiary="goDiary" @goBack="goBack" />
     </div>
 
-    <div  :class="{'hide-diary-page':hideDiaryPage}" class="diary-body">
+    <div :class="{'hide-diary-page':hideDiaryPage}" class="diary-body">
       <diary @close="clseDiary" ref="diaryRef" @goDiary="goDiary"></diary>
     </div>
   </div>
 </template>
 
 <script>
-import { reactive, toRefs,ref } from "vue";
+import { reactive, toRefs, ref } from "vue";
 import diary from "./book-page.vue";
 import blogPage from "./blog-page.vue";
 export default {
@@ -39,7 +39,7 @@ export default {
       hideBlogPage: true,
       hideDiaryPage: true,
     });
-    　const diaryRef = ref();
+    const diaryRef = ref();
     const enterBlogPage = () => {
       state.hideIndexPage = true;
     };
@@ -47,13 +47,20 @@ export default {
       state.hideIndexPage = false;
     };
     const goDiary = (res) => {
-      diaryRef.value.initPage(res)
+      diaryRef.value.initPage(res);
       state.hideDiaryPage = !state.hideDiaryPage;
     };
-    const clseDiary=()=>{
-      state.hideDiaryPage=true
-    }
-    return { ...toRefs(state), clseDiary,goDiary, enterBlogPage, goBack ,diaryRef};
+    const clseDiary = () => {
+      state.hideDiaryPage = true;
+    };
+    return {
+      ...toRefs(state),
+      clseDiary,
+      goDiary,
+      enterBlogPage,
+      goBack,
+      diaryRef,
+    };
   },
   components: {
     blogPage,
@@ -70,7 +77,6 @@ export default {
     setTimeout(() => {
       that.hideBlogPage = false;
     }, 500);
-
   },
 };
 </script>
@@ -152,9 +158,11 @@ export default {
       li {
         cursor: pointer;
         margin: 0px 50px;
-        font-size: 16px;
+        font-size: 22px;
         color: #4f4f4f;
         text-shadow: 0px 2px 5px #0003;
+        position: relative;
+        z-index: 99999;
       }
     }
     .blob1 {
@@ -183,7 +191,7 @@ export default {
     .name {
       width: 100%;
       height: 100%;
-      font-size: 41px;
+      font-size: 30px;
       text-align: center;
       position: relative;
       left: -100px;

@@ -1,31 +1,31 @@
 <template>
-    <el-menu class="sidebar-el-menu" :default-active="onRoutes" :collapse="collapse"  text-color="#333" active-text-color="#20a0ff" unique-opened router>
-      <template v-for="item in items">
-        <template v-if="item.subs">
-          <el-sub-menu :index="item.index" :key="item.index">
-            <template #title>
-              <i :class="item.icon"></i>
-              <span>{{ item.title }}</span>
-            </template>
-            <template v-for="subItem in item.subs">
-              <el-sub-menu v-if="subItem.subs" :index="subItem.index" :key="subItem.index">
-                <template #title>{{ subItem.title }}</template>
-                <el-menu-item v-for="(threeItem, i) in subItem.subs" :key="i" :index="threeItem.index">
-                  {{ threeItem.title }}</el-menu-item>
-              </el-sub-menu>
-              <el-menu-item v-else :index="subItem.index" :key="subItem.index">{{ subItem.title }}
-              </el-menu-item>
-            </template>
-          </el-sub-menu>
-        </template>
-        <template v-else>
-          <el-menu-item :index="item.index" :key="item.index">
+  <el-menu class="sidebar-el-menu" :default-active="onRoutes" :collapse="collapse" text-color="#333" active-text-color="#20a0ff" unique-opened router>
+    <template v-for="item in items">
+      <template v-if="item.subs">
+        <el-sub-menu :index="item.index" :key="item.index">
+          <template #title>
             <i :class="item.icon"></i>
-            <template #title>{{ item.title }}</template>
-          </el-menu-item>
-        </template>
+            <span>{{ item.title }}</span>
+          </template>
+          <template v-for="subItem in item.subs">
+            <el-sub-menu v-if="subItem.subs" :index="subItem.index" :key="subItem.index">
+              <template #title>{{ subItem.title }}</template>
+              <el-menu-item v-for="(threeItem, i) in subItem.subs" :key="i" :index="threeItem.index">
+                {{ threeItem.title }}</el-menu-item>
+            </el-sub-menu>
+            <el-menu-item v-else :index="subItem.index" :key="subItem.index">{{ subItem.title }}
+            </el-menu-item>
+          </template>
+        </el-sub-menu>
       </template>
-    </el-menu>
+      <template v-else>
+        <el-menu-item :index="item.index" :key="item.index">
+          <i :class="item.icon"></i>
+          <template #title>{{ item.title }}</template>
+        </el-menu-item>
+      </template>
+    </template>
+  </el-menu>
 </template>
 
 <script>
@@ -35,6 +35,11 @@ import { useRoute } from "vue-router";
 export default {
   setup() {
     const items = [
+      {
+        icon: "el-icon-lx-home",
+        index: "/",
+        title: "主页",
+      },
       {
         icon: "el-icon-lx-home",
         index: "/dashboard",
@@ -59,27 +64,12 @@ export default {
             index: "/article",
             title: "文章管理",
           },
-            {
-            index: "/classify",
-            title: "分类",
-          },
         ],
       },
       {
         icon: "el-icon-lx-home",
         index: "/setting",
         title: "系统设置",
-      },
-
-      {
-        icon: "el-icon-lx-home",
-        index: "/1",
-        title: "资源管理",
-      },
-      {
-        icon: "el-icon-lx-home",
-        index: "/ee",
-        title: "退出登陆",
       },
     ];
 
@@ -102,7 +92,6 @@ export default {
 </script>
 
 <style scoped>
-
 .sidebar::-webkit-scrollbar {
   width: 0;
 }
