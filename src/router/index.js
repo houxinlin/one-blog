@@ -24,6 +24,16 @@ const constantRoutes = [
       import(/* webpackChunkName: "manager" */ "../views/admin/manager.vue"),
     children: [
       {
+        path: "/dashboard",
+        component: () =>
+          import(
+            /* webpackChunkName: "article" */ "../views/admin/dashboard.vue"
+          ),
+        meta: {
+          login: true,
+        },
+      },
+      {
         path: "/article",
         component: () =>
           import(

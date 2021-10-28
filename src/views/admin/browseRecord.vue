@@ -1,9 +1,9 @@
 <template>
   <el-table v-loading="loading" :data="ipList" height="550" style="width: 100%">
-    <el-table-column prop="ipAddress" label="ip" width="180" />
-    <el-table-column prop="ipCity" label="城市" width="180" />
+    <el-table-column prop="ipAddress" label="ip" />
+    <el-table-column prop="ipCity" label="城市"  />
     <el-table-column prop="ipProvince" label="省份" />
-
+    <el-table-column prop="createDate" label="访问时间" />
   </el-table>
   <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" background layout="prev, pager, next" :page-size="pageSize" :total="dataTotal">
   </el-pagination>

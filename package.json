@@ -13,6 +13,7 @@
     "@toast-ui/vue-editor": "^3.1.0",
     "axios": "^0.23.0",
     "core-js": "^3.6.5",
+    "echarts": "^5.2.1",
     "element-plus": "^1.1.0-beta.24",
     "element-ui": "^2.15.6",
     "prismjs": "^1.25.0",

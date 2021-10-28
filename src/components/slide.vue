@@ -59,6 +59,10 @@ export default {
             index: "/article",
             title: "文章管理",
           },
+            {
+            index: "/classify",
+            title: "分类",
+          },
         ],
       },
       {
@@ -69,12 +73,12 @@ export default {
 
       {
         icon: "el-icon-lx-home",
-        index: "/dashboard",
+        index: "/1",
         title: "资源管理",
       },
       {
         icon: "el-icon-lx-home",
-        index: "/dashboard",
+        index: "/ee",
         title: "退出登陆",
       },
     ];

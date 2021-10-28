@@ -36,6 +36,28 @@ export function setSysConfig(data) {
     data
   })
 }
+export function dashboardApi() {
+  return axios({
+    url: '/api/admin/dashboard',
+    method: 'get',
+  })
+}
+export function addClassifyApi(data) {
+  return axios({
+    url: '/api/admin/addClassify',
+    method: 'post',
+    data
+  })
+}
+
+export function removeClassifyApi(data) {
+  return axios({
+    url: '/api/admin/removeClassify',
+    method: 'post',
+    data
+  })
+}
+
 
 
 

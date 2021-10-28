@@ -16,13 +16,38 @@
       </div>
       <el-button @click="onSaveConfig" type="primary">保存</el-button>
     </el-card>
+    <el-card class="box-card">
+      <template #header>
+        <div class="card-header">
+          <span>文章分类管理</span>
+          <el-button class="button" type="text"></el-button>
+        </div>
+      </template>
+      <div style="">
+        <div style="margin-bottom: 20px">
+          <el-button type="primary" size="small" @click="addTab()">
+            添加分类
+          </el-button>
+        </div>
+        <el-tabs v-model="editableTabsValue" type="card" closable @tab-remove="removeTab">
+          <el-tab-pane v-for="item in editableTabs" :key="item.classify" :label="item.classify" :name="item.classify">
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+    </el-card>
   </div>
 </template>
 
 <script>
 import { reactive, toRefs } from "vue";
-import { getSysConfigApi,setSysConfig } from "../../apis/admin";
-import { ElMessage } from "element-plus";
+import {
+  getSysConfigApi,
+  setSysConfig,
+  addClassifyApi,
+  removeClassifyApi,
+} from "../../apis/admin";
+import { listClassifyApi } from "../../apis/blog";
+import { ElMessage, ElMessageBox } from "element-plus";
 export default {
   setup() {
     const state = reactive({
@@ -30,7 +55,12 @@ export default {
       sysConfigsMap: {},
       configSelectKey: "",
       currentValue: "",
+
+      editableTabsValue: "2",
+      editableTabs: [],
+      tabIndex: 2,
     });
+
     const list = () => {
       getSysConfigApi().then((res) => {
         let value = res.data.data;
@@ -41,23 +71,71 @@ export default {
         state.sysConfigs = value;
         state.sysConfigsMap = map;
       });
+      listClassifyApi().then((res) => {
+        state.editableTabs = res.data.data;
+      });
     };
     const onConfigKeyChange = (val) => {
       state.currentValue = state.sysConfigsMap.get(val);
       console.log(state.configSelectKey, val);
     };
     const onSaveConfig = () => {
-        state.sysConfigsMap.set(state.configSelectKey,state.currentValue)
-        const obj = Object.fromEntries(state.sysConfigsMap);
-        setSysConfig(obj).then((res)=>{
-            ElMessage({
-                message:"保存成功",
-                type:"success"
-            })
-        })
+      state.sysConfigsMap.set(state.configSelectKey, state.currentValue);
+      const obj = Object.fromEntries(state.sysConfigsMap);
+      setSysConfig(obj).then((res) => {
+        ElMessage({
+          message: "保存成功",
+          type: "success",
+        });
+      });
     };
 
-    return { list, ...toRefs(state), onConfigKeyChange, onSaveConfig };
+    const addTab = () => {
+      openInputDialog();
+
+    };
+
+    const openInputDialog = () => {
+      ElMessageBox.prompt("输入分类名称", "提示", {
+        confirmButtonText: "添加",
+        cancelButtonText: "取消",
+        inputErrorMessage: "输入错误",
+      })
+        .then(({ value }) => {
+          addClassifyApi({ classify: value }).then((res) => {
+            ElMessage({
+              type: "success",
+              message: "添加成功",
+            });
+            state.editableTabs.push({ classify: value });
+          });
+        })
+        .catch(() => {});
+    };
+
+    const removeTab = (targetName) => {
+      let index = state.editableTabs.findIndex(
+        (item) => item.classify == targetName
+      );
+      removeClassifyApi({ classify: state.editableTabs[index].classify }).then(
+        (res) => {
+          ElMessage({
+            message: res.data.data ? "删除成功" : "删除失败",
+          });
+          if (res.data.data) {
+            state.editableTabs.splice(index, 1);
+          }
+        }
+      );
+    };
+    return {
+      list,
+      ...toRefs(state),
+      onConfigKeyChange,
+      onSaveConfig,
+      removeTab,
+      addTab,
+    };
   },
   mounted() {
     this.list();
@@ -66,7 +144,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.sys-config .el-button{
-        margin-top: 10px;
+.sys-config .el-button {
+  margin-top: 10px;
+}
+.el-card {
+  margin-bottom: 10px;
 }
 </style>

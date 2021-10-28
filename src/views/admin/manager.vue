@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <div>
 
     <el-aside>
       <v-sidebar />
@@ -9,7 +9,7 @@
 
       </router-view>
     </el-main>
-  </el-container>
+  </div>
 </template>
 <script>
 import { computed } from "vue";
