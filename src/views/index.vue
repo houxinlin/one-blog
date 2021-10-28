@@ -29,8 +29,8 @@
 
 <script>
 import { reactive, toRefs, ref } from "vue";
-import diary from "./book-page.vue";
-import blogPage from "./blog-page.vue";
+import diary from "./book.vue";
+import blogPage from "./blog.vue";
 export default {
   setup() {
     let state = reactive({

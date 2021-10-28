@@ -27,6 +27,8 @@
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
+    "compression-webpack-plugin": "^5.0.1",
+    "cross-env": "^7.0.3",
     "less": "^3.0.4",
     "less-loader": "^5.0.0"
   }
