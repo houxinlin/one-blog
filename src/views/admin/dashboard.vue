@@ -56,7 +56,7 @@ export default {
           Object.keys(state.articleNumMap),
           Object.values(state.articleNumMap)
         );
-      });
+      })
     };
     const setArticleNum = (key, value) => {
       console.log(Array.from(key).length)

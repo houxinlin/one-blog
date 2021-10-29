@@ -11,8 +11,8 @@ instance.interceptors.response.use(
       router.push({
         path: "/login",
       });
-      Promise.reject(error);
-      return
+      return Promise.reject(new Error("no login"));
+      
     }
     return response;
   },

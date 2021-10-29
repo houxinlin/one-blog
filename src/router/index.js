@@ -78,7 +78,6 @@ const router = createRouter({
   routes: constantRoutes,
 });
 router.beforeEach((to, from, next) => {
-  //如果没有登陆
   if (to.meta.login) {
     if (sessionStorage.getItem("login")) {
       next();
