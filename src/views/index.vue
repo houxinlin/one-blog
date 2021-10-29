@@ -3,8 +3,7 @@
     <div class="index-body" :style="{
         transform: 'translateX(' + (hideIndexPage ? clientWidth : 0) + 'px)'}">
       <nav>
-        <li @click="enterBlogPage">Blog</li>
-        <!-- <li>联系我</li> -->
+        <li @click="intoBlogPage()">Blog</li>
       </nav>
       <img class="blob1" src="../assets/imgs/blob1.svg" alt="" />
       <img class="blob2" src="../assets/imgs/blob2.svg" alt="" />
@@ -18,11 +17,11 @@
     <div class="blog-body" :style="{
         transform: 'translateX(' + (hideIndexPage ? 0 : -clientWidth) + 'px)',
         display: hideBlogPage ? 'none' : 'block',}">
-      <blogPage @goDiary="goDiary" @goBack="goBack" />
+      <blogPage/>
     </div>
 
     <div :class="{'hide-diary-page':hideDiaryPage}" class="diary-body">
-      <diary @close="clseDiary" ref="diaryRef" @goDiary="goDiary"></diary>
+      <diary ref="refDiary"></diary>
     </div>
   </div>
 </template>
@@ -31,6 +30,8 @@
 import { reactive, toRefs, ref } from "vue";
 import diary from "./book.vue";
 import blogPage from "./blog.vue";
+import bus from "../event/event";
+
 export default {
   setup() {
     let state = reactive({
@@ -39,41 +40,45 @@ export default {
       hideBlogPage: true,
       hideDiaryPage: true,
     });
-    const diaryRef = ref();
-    const enterBlogPage = () => {
-      state.hideIndexPage = true;
-    };
+    const refDiary = ref();
+
     const goBack = () => {
       state.hideIndexPage = false;
     };
-    const goDiary = (res) => {
-      diaryRef.value.initPage(res);
+    const intoDiaryPage = () => {
       state.hideDiaryPage = !state.hideDiaryPage;
     };
     const clseDiary = () => {
       state.hideDiaryPage = true;
     };
+    const intoBlogPage = () => {
+      state.hideIndexPage = true;
+    };
     return {
       ...toRefs(state),
       clseDiary,
-      goDiary,
-      enterBlogPage,
+      intoDiaryPage,
+      intoBlogPage,
       goBack,
-      diaryRef,
+      refDiary,
     };
   },
   components: {
     blogPage,
     diary,
   },
-  created() {},
   mounted() {
     let that = this;
     this.clientWidth = `${document.documentElement.clientWidth}`;
     window.onresize = function () {
-      var widheight = `${document.documentElement.clientHeight}`;
       that.clientWidth = `${document.documentElement.clientWidth}`;
     };
+    bus.on("action", (data) => {
+      if (data.page == "diary") {
+        this.intoDiaryPage();
+      }
+    });
+
     setTimeout(() => {
       that.hideBlogPage = false;
     }, 500);

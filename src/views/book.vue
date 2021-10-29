@@ -30,7 +30,9 @@
                   <li @click.stop="goToPage(i+1,it)" v-for="(el ,it) in item" :key="el.id">
 
                     <span>{{el.blogTitle}}</span>
-                    <span>...........................................................</span>
+                    <span>
+                      <template v-for="item in 100" :key="item">.</template>
+                    </span>
                     <span><span>{{(i*2+it)+1}}</span></span>
                   </li>
                 </template>
@@ -60,9 +62,9 @@
 import { reactive, toRefs } from "vue";
 
 import "../assets/font/font-icon/iconfont.css";
-
+import bus from "../event/event";
 export default {
-  setup(props, { emit }) {
+  setup() {
     const state = reactive({
       lastTimeStamp: 0,
       articleList: [],
@@ -75,7 +77,7 @@ export default {
       bookeSize: 1,
     });
     const closePage = () => {
-      emit("close");
+      bus.trigger("action", { page: "diary", data: null });
     };
 
     const handlerPage = (index) => {
@@ -100,12 +102,12 @@ export default {
     };
     const nextPage = (index) => {
       state.palying = true;
-      new filp(index);
+      filp(index);
       state.active = state.active + 1;
       state.lastTimeStamp = new Date().getTime();
     };
     const upPage = (index) => {
-      new filp(index);
+      filp(index);
       state.active = state.active - 1;
       state.lastTimeStamp = new Date().getTime();
     };
@@ -121,7 +123,6 @@ export default {
         for (let i = 0; i < page; i++) {
           state.zIndex[i] = i + 1;
         }
-        // state.zIndex[0] = 0;
       }, 200);
     };
     const goHome = () => {
@@ -137,6 +138,9 @@ export default {
       }, 200);
     };
     const initPage = (data) => {
+      if (data == null) {
+        return;
+      }
       state.dataSource = data;
       state.active = 0;
       state.zIndex.length = 0;
@@ -165,7 +169,13 @@ export default {
     };
   },
   mounted() {
-    // this.init();
+    bus.on("action", (data) => {
+      if (data.page == "diary") {
+        if (data.data != null) {
+          this.initPage(data.data);
+        }
+      }
+    });
   },
 };
 </script>
@@ -185,8 +195,6 @@ export default {
     text-align: center;
     margin-top: 10px;
   }
-  .line {
-  }
   img {
     flex: 1;
     object-fit: cover;
@@ -201,19 +209,7 @@ export default {
 .center-back {
   transform: translateX(360px);
 }
-.active {
-}
-.desktop {
-  // position: fixed;
-  // left: 0px;
-  // right: 0px;
-  // bottom: 0px;
-  // top: 0px;
-  // display: flex;
-  // justify-content: center;
-  // align-items: center;
-  // background: #000000;
-}
+
 .shadow {
   box-shadow: 3px 0px 2px #dadada;
 }

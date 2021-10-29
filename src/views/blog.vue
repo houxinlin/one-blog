@@ -13,9 +13,9 @@
         <div @click="indexPage()" class="menu-item">首页</div>
         <!-- <div class="menu-item">归档</div> -->
         <div @click="listNote(1)" class="menu-item">随笔</div>
-        <div @click="goDiary()" class="menu-item">日记</div>
+        <div @click="intoDiaryPage()" class="menu-item">日记</div>
         <a href="/manager">
-            <div class="menu-item">管理</div>
+          <div class="menu-item">管理</div>
         </a>
         <div class="menu-item">
         </div>
@@ -89,17 +89,16 @@ import "../assets/font/font-icon/iconfont.css";
 
 import "@toast-ui/editor/dist/toastui-editor.css";
 import Viewer from "@toast-ui/editor/dist/toastui-editor-viewer";
+import bus from "../event/event";
 import {
   getListApi,
   getMarkdownContentApi,
   listClassifyApi,
   listDiaryApi,
-  noteApi,
 } from "../apis/blog";
 export default {
   mounted() {
     this.init();
-    // this.listByType(1, "Java");
   },
   setup(props, { emit }) {
     const state = reactive({
@@ -138,7 +137,7 @@ export default {
         /**
          * 博客预览
          */
-        const editor = new Viewer({
+        new Viewer({
           el: document.querySelector("#md"),
           previewStyle: "vertical",
           height: "500px",
@@ -180,7 +179,7 @@ export default {
     };
     const reset = () => {
       state.showTitle = false;
-      state.hideAarticleList = false
+      state.hideAarticleList = false;
       state.hideNavBar = false;
     };
     const onShowArticleList = () => {
@@ -191,9 +190,9 @@ export default {
         reset();
       }
     };
-    const goDiary = () => {
+    const intoDiaryPage = () => {
       listDiaryApi().then((res) => {
-        emit("goDiary", res.data.data);
+        bus.trigger("action", { page: "diary", data: res.data.data });
       });
     };
     const indexPage = () => {
@@ -209,7 +208,7 @@ export default {
       listNote,
       indexPage,
       setBottomPage,
-      goDiary,
+      intoDiaryPage,
       onHideArticleList,
       init,
       onArticleItemClick,
