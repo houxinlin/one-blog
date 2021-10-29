@@ -102,7 +102,7 @@ export default {
         inputErrorMessage: "输入错误",
       })
         .then(({ value }) => {
-          addClassifyApi({ classify: value }).then((res) => {
+          addClassifyApi({ classify: value }).then(() => {
             ElMessage({
               type: "success",
               message: "添加成功",
