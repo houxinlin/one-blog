@@ -53,25 +53,28 @@
         <div :class="{ 'show-blog-viewer': hideAarticleList }" class="article-viewer">
           <div id="md"></div>
         </div>
-        <div :class="{ 'hide-article-list': hideAarticleList }" class="article-list">
-          <div v-for="item in blogs" :key="item" @click="onArticleItemClick(item.id)" class="article-item">
-            <header>
-              <h3 class="title">{{ item.blogTitle }}</h3>
-            </header>
-            <article class="outline">
-              {{ item.blogDescribe }}
-            </article>
-            <footer>
-              <span class="iconfont icon-liulan"></span>
-              <span class="text">{{ item.watchCount }}</span>
-              <span class="iconfont icon-riqi"></span>
-              <span class="text">{{ item.createDate }}</span>
-            </footer>
+        <el-main class="el-main" v-loading="loading">
+          <div :class="{ 'hide-article-list': hideAarticleList }" class="article-list">
+            <div v-for="item in blogs" :key="item" @click="onArticleItemClick(item.id)" class="article-item">
+              <header>
+                <h3 class="title">{{ item.blogTitle }}</h3>
+              </header>
+              <article class="outline">
+                {{ item.blogDescribe }}
+              </article>
+              <footer>
+                <span class="iconfont icon-liulan"></span>
+                <span class="text">{{ item.watchCount }}</span>
+                <span class="iconfont icon-riqi"></span>
+                <span class="text">{{ item.createDate }}</span>
+              </footer>
+            </div>
+            <button :class="{ select: currentPage == index }" @click="listByType(index, currentClassify,currentNavIndex)" class="page-button" v-for="index in pageSize" :key="index">
+              {{ index }}
+            </button>
           </div>
-          <button :class="{ select: currentPage == index }" @click="listByType(index, currentClassify,currentNavIndex)" class="page-button" v-for="index in pageSize" :key="index">
-            {{ index }}
-          </button>
-        </div>
+        </el-main>
+
       </div>
     </section>
   </div>
@@ -112,6 +115,7 @@ export default {
       currentPage: 1,
       currentNavIndex: 0,
       hideNavBar: false,
+      loading: true,
     });
     const listNote = (page) => {
       reset();
@@ -130,7 +134,9 @@ export default {
      * 获取博客内容
      */
     const getBlogContent = (id) => {
+      state.loading=true
       getMarkdownContentApi({ id: id }).then((res) => {
+        state.loading=false
         const value = res.data.data.markdownContent;
         state.currentBlogTitle = res.data.data.blogTitle;
         // state.hideAarticleList = !state.hideAarticleList;
@@ -156,9 +162,11 @@ export default {
       state.currentNavIndex = navIndex;
       state.currentClassify = type;
       state.currentPage = page;
+      state.loading = true;
       getListApi({ page: page, type: type }).then((res) => {
         state.blogs = res.data.data.records;
         state.pageSize = res.data.data.pages;
+        state.loading = false;
       });
     };
     const setBottomPage = () => {};
@@ -175,6 +183,7 @@ export default {
         .then((res) => {
           state.blogs = res.data.data.records;
           state.pageSize = res.data.data.pages;
+          state.loading=false
         });
     };
     const reset = () => {
@@ -251,6 +260,10 @@ export default {
       height: calc(100% - 101px);
       position: relative;
       margin-top: 61px;
+      .el-main {
+        height: 100%;
+        padding: 0px;
+      }
       .article-viewer {
         transform: scale(0);
         background: #ffffff;
@@ -328,6 +341,7 @@ export default {
         display: flex;
         align-items: center;
         height: 100%;
+        
         li:nth-of-type(1) {
           margin-left: 0px;
         }
