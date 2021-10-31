@@ -4,13 +4,19 @@ const constantRoutes = [
   {
     path: "/",
     name: "Index",
+    // component(resolve) {
+    //   require(['../views/index.vue'], resolve)
+    // }
     component: () =>
-      import(/* webpackChunkName: "index" */ "../views/index.vue"),
-  },
+    import(/* webpackChunkName: "Index" */ "../views/index.vue")
+   },
 
   {
     path: "/login",
     name: "Login",
+    // component(resolve) {
+    //   require(['../views/index.vue'], resolve)
+    // }
     component: () =>
       import(/* webpackChunkName: "login" */ "../views/admin/login.vue"),
   },
@@ -20,51 +26,54 @@ const constantRoutes = [
     meta: {
       login: true,
     },
-    component: () =>
-      import(/* webpackChunkName: "manager" */ "../views/admin/manager.vue"),
+    component(resolve) {
+      require(['../views/admin/manager.vue'], resolve)
+    },
     children: [
       {
         path: "/dashboard",
-        component: () =>
-          import(
-            /* webpackChunkName: "article" */ "../views/admin/dashboard.vue"
-          ),
+        component(resolve) {
+          require(['../views/admin/dashboard.vue'], resolve)
+        },
         meta: {
           login: true,
         },
       },
       {
         path: "/article",
-        component: () =>
-          import(
-            /* webpackChunkName: "article" */ "../views/admin/article.vue"
-          ),
+        component(resolve) {
+          require(['../views/admin/article.vue'], resolve)
+        }
+     ,
         meta: {
           login: true,
         },
       },
+      
       {
         path: "/setting",
         name: "Setting",
-        component: () =>
-          import(
-            /* webpackChunkName: "Setting" */ "../views/admin/setting.vue"
-          ),
+
+        component(resolve) {
+          require(['../views/admin/setting.vue'], resolve)
+        }
+
       },
       {
         path: "/write",
-        component: () =>
-          import(/* webpackChunkName: "write" */ "../views/admin/write.vue"),
+        component(resolve) {
+          require(['../views/admin/write.vue'], resolve)
+        },
         meta: {
           login: true,
         },
       },
       {
         path: "/browseRecord",
-        component: () =>
-          import(
-            /* webpackChunkName: "browseRecord" */ "../views/admin/browseRecord.vue"
-          ),
+        component(resolve) {
+          require(['../views/admin/browseRecord.vue'], resolve)
+        },
+
         meta: {
           login: true,
         },
