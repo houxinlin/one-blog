@@ -8,27 +8,24 @@
       <img class="blob1" src="../assets/imgs/blob1.svg" alt="" />
       <img class="blob2" src="../assets/imgs/blob2.svg" alt="" />
       <div class="name">
-        <span>Hello, I'm HouXinLin </span>
-        <span>👋</span>
-        <br />
+        <div> <span>Hello, I'm HouXinLin </span>
+          <span>👋</span>
+        </div>
         <span>欢迎来到这里</span>
       </div>
     </div>
     <div class="blog-body" :style="{
         transform: 'translateX(' + (hideIndexPage ? 0 : -clientWidth) + 'px)',
         display: hideBlogPage ? 'none' : 'block',}">
-      <blogPage/>
+      <blogPage />
     </div>
 
-    <div :class="{'hide-diary-page':hideDiaryPage}" class="diary-body">
-      <diary ref="refDiary"></diary>
-    </div>
+
   </div>
 </template>
 
 <script>
 import { reactive, toRefs, ref } from "vue";
-import diary from "./book.vue";
 import blogPage from "./blog.vue";
 import bus from "../event/event";
 
@@ -37,8 +34,8 @@ export default {
     let state = reactive({
       hideIndexPage: false,
       clientWidth: 0,
+      clientHeight: 0,
       hideBlogPage: true,
-      hideDiaryPage: true,
     });
     const refDiary = ref();
 
@@ -46,10 +43,10 @@ export default {
       state.hideIndexPage = false;
     };
     const intoDiaryPage = () => {
-      state.hideDiaryPage = !state.hideDiaryPage;
+      // state.hideDiaryPage = !state.hideDiaryPage;
     };
     const clseDiary = () => {
-      state.hideDiaryPage = true;
+      // state.hideDiaryPage = true;
     };
     const intoBlogPage = () => {
       state.hideIndexPage = true;
@@ -60,24 +57,20 @@ export default {
       intoDiaryPage,
       intoBlogPage,
       goBack,
-      refDiary,
     };
   },
   components: {
     blogPage,
-    diary,
   },
   mounted() {
     let that = this;
     this.clientWidth = `${document.documentElement.clientWidth}`;
+    that.clientHeight = `${document.documentElement.clientWidth}`;
     window.onresize = function () {
       that.clientWidth = `${document.documentElement.clientWidth}`;
+      that.clientHeight = `${document.documentElement.clientWidth}`;
     };
-    bus.on("action", (data) => {
-      if (data.page == "diary") {
-        this.intoDiaryPage();
-      }
-    });
+
 
     setTimeout(() => {
       that.hideBlogPage = false;
@@ -101,7 +94,7 @@ export default {
   background: #ffffff00;
 }
 .hide-diary-page {
-  transform: translateY(800px);
+  transform: translateY(-800px);
   // background: #0003;
 }
 @keyframes wave-animation {
@@ -141,7 +134,6 @@ export default {
   overflow: hidden;
   .fixed-full;
   .blog-body {
-    background: #923939;
     transform: translateX(-9000px);
     position: fixed;
     top: 0px;
@@ -194,14 +186,20 @@ export default {
       left: 100px;
     }
     .name {
-      width: 100%;
-      height: 100%;
+      position: fixed;
       font-size: 30px;
       text-align: center;
-      position: relative;
-      left: -100px;
-      top: 70px;
+      /* position: relative; */
+      /* left: -100px; */
+      top: 0px;
       color: #4b4b4b;
+      bottom: 0px;
+      right: 0px;
+      left: 0px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
     }
     .name span:nth-of-type(2) {
       transition: all 0.5s;

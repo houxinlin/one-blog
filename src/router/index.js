@@ -4,15 +4,15 @@ const constantRoutes = [
   {
     path: "/",
     name: "Index",
-    component: () =>
-      import(/* webpackChunkName: "index" */ "../views/index.vue"),
+    component:()=>import("@/views/index.vue"),
+
   },
 
   {
     path: "/login",
     name: "Login",
-    component: () =>
-      import(/* webpackChunkName: "login" */ "../views/admin/login.vue"),
+    component:()=>import("@/views/admin/login.vue"),
+
   },
   {
     path: "/manager",
@@ -20,25 +20,21 @@ const constantRoutes = [
     meta: {
       login: true,
     },
-    component: () =>
-      import(/* webpackChunkName: "manager" */ "../views/admin/manager.vue"),
+    component:()=>import("@/views/admin/manager.vue"),
+
     children: [
       {
         path: "/dashboard",
-        component: () =>
-          import(
-            /* webpackChunkName: "article" */ "../views/admin/dashboard.vue"
-          ),
+        component:()=>import("@/views/admin/dashboard.vue"),
+ 
         meta: {
           login: true,
         },
       },
       {
         path: "/article",
-        component: () =>
-          import(
-            /* webpackChunkName: "article" */ "../views/admin/article.vue"
-          ),
+        component:()=>import("@/views/admin/article.vue"),
+
         meta: {
           login: true,
         },
@@ -46,25 +42,20 @@ const constantRoutes = [
       {
         path: "/setting",
         name: "Setting",
-        component: () =>
-          import(
-            /* webpackChunkName: "Setting" */ "../views/admin/setting.vue"
-          ),
+        component:()=>import("@/views/admin/setting.vue")
+   
       },
       {
         path: "/write",
-        component: () =>
-          import(/* webpackChunkName: "write" */ "../views/admin/write.vue"),
+        component:()=>import("@/views/admin/write.vue"),
         meta: {
           login: true,
         },
       },
       {
         path: "/browseRecord",
-        component: () =>
-          import(
-            /* webpackChunkName: "browseRecord" */ "../views/admin/browseRecord.vue"
-          ),
+        component:()=>import("@/views/admin/browseRecord.vue"),
+  
         meta: {
           login: true,
         },

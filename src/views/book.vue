@@ -77,7 +77,7 @@ export default {
       bookeSize: 1,
     });
     const closePage = () => {
-      bus.trigger("action", { page: "diary", data: null });
+      bus.trigger("action", { page: "diary",opt:"close", data: null });
     };
 
     const handlerPage = (index) => {
@@ -211,7 +211,7 @@ export default {
 }
 
 .shadow {
-  box-shadow: 3px 0px 2px #dadada;
+  box-shadow:4px 4px 11px 0px #9a9a9a
 }
 .book {
   position: relative;
