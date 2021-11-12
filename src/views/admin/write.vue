@@ -103,10 +103,13 @@ export default {
         ElMessage({
           message: "发布成功",
           type: "success",
+          duration:1000
         });
-        router.push({
-          path:"/article"
-        })
+        setTimeout(() => {
+          router.push({
+            path: "/article",
+          });
+        }, 1500);
       });
     };
     return { ...toRefs(state), onSubmit };
