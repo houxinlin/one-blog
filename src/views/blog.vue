@@ -197,7 +197,6 @@ export default {
     const resetPage = () => {
       state.blogLayoutY = "0px";
       state.dirayLayoutY = -state.clientHeight + "px";
-      console.log(state.dirayLayoutY);
     };
     const init = () => {
       bus.on("action", (data) => {

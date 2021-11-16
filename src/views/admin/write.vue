@@ -1,4 +1,5 @@
 <template>
+  <el-button @click="loadCacheBlog(true)" style="margin-bottom:10px" size="mini">加载草稿</el-button>
   <div id="markdown"></div>
   <el-form ref="form">
     <el-form-item label="标题">
@@ -19,10 +20,26 @@
       <el-button type="primary" @click="onSubmit">发布</el-button>
     </el-form-item>
   </el-form>
+
+  <el-dialog v-model="cacheDialogTableVisible" title="操作">
+    <el-scrollbar height="400px">
+      <el-table :data="cacheBlog">
+        <el-table-column property="title" label="标题" width="150"></el-table-column>
+        <el-table-column property="address" label="操作">
+          <template #default="scope">
+            <el-button size="mini" @click="handleCacheEdit(scope.$index, scope.row)">加载</el-button>
+            <el-button size="mini" type="danger" @click="handleCacheDelete(scope.$index, scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-scrollbar>
+
+  </el-dialog>
+
 </template>
 
 <script>
-import { reactive, toRefs } from "vue";
+import { onMounted, reactive, toRefs } from "vue";
 import "prismjs/themes/prism.css";
 import "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css";
 import Editor from "@toast-ui/editor";
@@ -39,13 +56,25 @@ import router from "../../router/index";
 
 export default {
   mounted() {
-    this.editor = new Editor({
-      el: document.querySelector("#markdown"),
-      height: "500px",
-      previewStyle: "vertical",
-    });
-    let id = router.currentRoute.value.query.id;
+    let cache = JSON.parse(localStorage.getItem("cacheblog")) || {};
+    var max = 0;
+    let cacheArrays = [];
+    for (var val of Object.keys(cache)) {
+      if (parseInt(val) > max) {
+        max = parseInt(val);
+      }
+      let item = JSON.parse(cache[val]);
+      item.key = val;
+      cacheArrays.push(item);
+    }
+    this.cacheBlog = cacheArrays;
+    this.currentCacheKey = parseInt(max) + 1;
 
+    setInterval(() => {
+      this.autoSave();
+    }, 1000);
+
+    let id = router.currentRoute.value.query.id;
     listClassifyApi().then((res) => {
       this.typeList = res.data.data;
     });
@@ -69,19 +98,79 @@ export default {
       el: document.querySelector("#markdown"),
       height: "500px",
       previewStyle: "vertical",
-      initialValue: " ",
+      initialValue: "## ",
     });
   },
 
   setup() {
     const state = reactive({
+      cacheBlog: [],
+      currentCacheKey: 0,
       title: "",
       desc: "",
       type: "",
       typeList: [],
+      cacheDialogTableVisible: false,
       editor: null,
     });
 
+    /**
+     * 自动保存
+     *
+     */
+    const autoSave = () => {
+      let id = router.currentRoute.value.query.id;
+      //有id不保存，意思为编辑文章，markdown数量小于10不保存，
+      if (id || state.editor.getMarkdown().length < 10) {
+        return;
+      }
+      var cache = JSON.parse(localStorage.getItem("cacheblog")) || {};
+      cache[state.currentCacheKey] = JSON.stringify({
+        title: state.title,
+        content: state.editor.getMarkdown(),
+      });
+      let str = JSON.stringify(cache);
+      localStorage.setItem("cacheblog", str);
+    };
+    /**
+     * 编辑草稿
+     */
+    const handleCacheEdit = (i, item) => {
+      state.title = item.title;
+      state.currentCacheKey = item.key;
+      state.editor = new Editor({
+        el: document.querySelector("#markdown"),
+        height: "500px",
+        previewStyle: "vertical",
+        initialValue: item.content,
+      });
+      state.cacheDialogTableVisible = false;
+    };
+
+    /**
+     * 加载草稿
+     */
+    const loadCacheBlog = (show = false) => {
+      let cacheArrays = [];
+      let cache = JSON.parse(localStorage.getItem("cacheblog")) || {};
+      for (var val of Object.keys(cache)) {
+        let item = JSON.parse(cache[val]);
+        item.key = val;
+        cacheArrays.push(item);
+      }
+      state.cacheDialogTableVisible = show;
+      state.cacheBlog = cacheArrays;
+    };
+    /**
+     * 删除本地草稿，并重新加载草稿列表
+     */
+    const handleCacheDelete = (i, item) => {
+      let cache = JSON.parse(localStorage.getItem("cacheblog")) || {};
+      delete cache[item.key];
+      localStorage.setItem("cacheblog", JSON.stringify(cache));
+      loadCacheBlog();
+    };
+    const loadCache = () => {};
     const onSubmit = () => {
       let body = {
         id: router.currentRoute.value.query.id,
@@ -97,13 +186,14 @@ export default {
         spinner: "el-icon-loading",
         background: "#ffffffcf",
       });
+
       addBlogApi(body).then((res) => {
         console.log(res);
         loading.close();
         ElMessage({
           message: "发布成功",
           type: "success",
-          duration:1000
+          duration: 1000,
         });
         setTimeout(() => {
           router.push({
@@ -112,7 +202,15 @@ export default {
         }, 1500);
       });
     };
-    return { ...toRefs(state), onSubmit };
+    return {
+      ...toRefs(state),
+      handleCacheDelete,
+      loadCacheBlog,
+      handleCacheEdit,
+      loadCache,
+      onSubmit,
+      autoSave,
+    };
   },
 };
 </script>,
