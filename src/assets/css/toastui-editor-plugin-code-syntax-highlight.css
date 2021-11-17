@@ -10,12 +10,12 @@
 }
 .toastui-editor-contents p{
   color: #333 !important;
-  font-size: .87rem!important;
+  font-size: 16ox !important;
   line-height: 1.4rem!important;
   margin: 10px 0px!important;
 }
 .toastui-editor-contents pre code{
-  color: #ffffff !important;
+  color: #c5c5c5 !important;
   background: none !important;
 }
 .token.operator, .token.entity, .token.url, .language-css .token.string, .style .token.string{
