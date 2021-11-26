@@ -168,7 +168,12 @@ export default {
       let cache = JSON.parse(localStorage.getItem("cacheblog")) || {};
       delete cache[item.key];
       localStorage.setItem("cacheblog", JSON.stringify(cache));
-      loadCacheBlog();
+      loadCacheBlog(true);
+      ElMessage({
+          message: "删除成功",
+          type: "success",
+          duration: 1000,
+        });
     };
     const loadCache = () => {};
     const onSubmit = () => {

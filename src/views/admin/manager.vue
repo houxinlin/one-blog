@@ -46,6 +46,11 @@ export default {
   box-shadow:2px 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
 .el-main {
-  padding-left: 210px;
+    position: absolute;
+    bottom: 0px;
+    top: 0px;
+    left: 210px;
+    right: 0px;
+    box-sizing: border-box;
 }
 </style>

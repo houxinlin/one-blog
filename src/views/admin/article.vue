@@ -1,5 +1,5 @@
 <template>
-  <el-table v-loading="loading" :data="listBlogs" height="550" style="width: 100%">
+  <el-table v-loading="loading" :data="listBlogs" height="93%" style="width: 100%">
     <el-table-column prop="id" label="id" width="180" />
     <el-table-column prop="blogTitle" label="标题" width="180" />
     <el-table-column prop="createDate" label="创建时间" />
