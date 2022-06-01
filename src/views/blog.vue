@@ -45,11 +45,11 @@
           </div>
           <div :style="{
             transform: showTitle ? 'translateY(0)' : 'translateY(50px)',
-          }" @click="onHideArticleList" class="bottom-title" style="display:flex">
+          }" @click="onHideArticleList" class="bottom-title" style="display:flex; align-items: center;">
             <h2 class="article-title">
               {{ currentBlogTitle }}
             </h2>
-            <div v-if="hideAarticleList" class="iconfont icon-fanhui"></div>
+            <span v-if="hideAarticleList" class="iconfont icon-fanhui"></span>
 
           </div>
         </nav>
@@ -62,7 +62,7 @@
             <div :class="{ 'hide-article-list': hideAarticleList }" class="article-list">
               <div v-for="item in blogs" :key="item" @click="onArticleItemClick(item.id)" class="article-item">
                 <header>
-                  <h3 class="title">{{ item.blogTitle }}</h3>
+                  <span class="title">{{ item.blogTitle }}</span>
                 </header>
                 <article class="outline">
                   {{ item.blogDescribe }}
@@ -274,7 +274,7 @@ export default {
   transform: scale(1) !important;
 }
 #md {
-  width: 70%;
+  width: 57%;
 }
 
 .scale-view {
@@ -320,7 +320,7 @@ export default {
       margin-top: 61px;
       flex: 1;
       .el-main {
-        height: 100%;
+        // height: 100%;
         padding: 0px;
       }
       .article-viewer {
@@ -343,7 +343,6 @@ export default {
           color: #000000;
           border-radius: 4px;
           margin: 0 7px;
-          border: 1px #424242 solid;
         }
 
         .article-item {
@@ -351,15 +350,18 @@ export default {
           margin-bottom: 20px;
           border-bottom: 1px #f7f7f7 solid;
           .title {
-            color: #383838;
             font-size: 15px;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 24px;
+            color: #323030;
           }
           .outline {
-            margin-top: 6px;
-            font-size: 13px;
-            color: #464646;
-            width: 70%;
-            padding: 2px 0px;
+              margin-top: 2px;
+              font-size: 13px;
+              color: #6c6c6c;
+              width: 70%;
+              padding: 5px 0px;
           }
           footer {
             text-align: justify;
@@ -393,7 +395,8 @@ export default {
       .article-title {
         margin-right: 10px;
         color: #383838;
-        font-size: 15px;
+        font-size: 14px;
+        margin-top: 13px;
       }
       .list {
         position: absolute;

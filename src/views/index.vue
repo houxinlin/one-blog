@@ -3,7 +3,7 @@
     <div class="index-body" :style="{
         transform: 'translateX(' + (hideIndexPage ? clientWidth : 0) + 'px)'}">
       <nav>
-        <li @click="intoBlogPage()">博客</li>
+        <li @click="intoBlogPage()">Blog</li>
       </nav>
       <img class="blob1" src="../assets/imgs/blob1.svg" alt="" />
       <img class="blob2" src="../assets/imgs/blob2.svg" alt="" />
@@ -19,7 +19,6 @@
         display: hideBlogPage ? 'none' : 'block',}">
       <blogPage />
     </div>
-
 
   </div>
 </template>
