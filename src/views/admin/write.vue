@@ -170,12 +170,12 @@ export default {
       localStorage.setItem("cacheblog", JSON.stringify(cache));
       loadCacheBlog(true);
       ElMessage({
-          message: "删除成功",
-          type: "success",
-          duration: 1000,
-        });
+        message: "删除成功",
+        type: "success",
+        duration: 1000,
+      });
     };
-    const loadCache = () => {};
+    const loadCache = () => { };
     const onSubmit = () => {
       let body = {
         id: router.currentRoute.value.query.id,

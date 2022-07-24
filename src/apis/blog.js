@@ -5,25 +5,25 @@ export function listDiaryApi() {
     method: 'get',
   })
 }
-export function noteApi(data){
+export function noteApi(data) {
   return axios({
     url: '/api/blog/note',
     method: 'get',
-    params:data
-  }) 
+    params: data
+  })
 }
 export function getListApi(data) {
   return axios({
     url: '/api/blog/list',
     method: 'get',
-    params:data
+    params: data
   })
 }
 export function getMarkdownContentApi(data) {
   return axios({
     url: '/api/blog/detail',
     method: 'get',
-    params:data
+    params: data
   })
 }
 export function listClassifyApi() {
@@ -37,6 +37,21 @@ export function addBlogApi(data) {
   return axios({
     url: '/api/admin/add',
     method: 'post',
-    data:data
+    data: data
+  })
+}
+
+export function autoCompletionApi(text) {
+  return axios({
+    url: '/api/blog/autoCompletion',
+    method: 'get',
+    params: {text}
+  })
+}
+export function searchApi(q,from) {
+  return axios({
+    url: '/api/blog/search',
+    method: 'get',
+    params: {q,from}
   })
 }

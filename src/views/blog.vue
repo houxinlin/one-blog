@@ -1,5 +1,6 @@
 <template>
   <div class="body">
+    <!-- 左侧aside -->
     <aside>
       <div class="background">
         <img src="../assets/background/bck.jpg" alt="" />
@@ -29,36 +30,47 @@
         </a>
       </div>
     </aside>
+    <!-- 左侧aside end -->
     <section>
       <div class="diary-layout layout-item" :style="{'transform':'translateY('+(dirayLayoutY)+')'}">
         <diary ref="refDiary"></diary>
       </div>
       <!-- //transform: translateY(10px); -->
       <div :style="{'transform':'translateY('+blogLayoutY+')'}" class="blog-layout layout-item">
+        <!-- 自动补全结果 -->
+        <div v-if="componentsList.length>0" class="search-result">
+          <template v-for="item in componentsList" :key="item">
+            <div @click="onArticleItemClick(item.hit.sourceAsMap.id)">{{item.hit.sourceAsMap.blogTitle}}</div>
+          </template>
+        </div>
         <nav>
-          <div class="list" :style="{
-            transform: hideNavBar ? 'translateY(-55px)' : 'none',
-          }">
+          <!-- 文章分类导航 -->
+          <div class="list" :style="{ transform: hideNavBar ? 'translateY(-55px)' : 'none', }">
             <li @click="listByType(1, item.classify,index)" v-for="(item ,index) in classify" :key="item" :class="{'select':currentNavIndex==index}">
               {{ item.classify }}
             </li>
           </div>
-          <div :style="{
-            transform: showTitle ? 'translateY(0)' : 'translateY(50px)',
-          }" @click="onHideArticleList" class="bottom-title" style="display:flex; align-items: center;">
-            <h2 class="article-title">
-              {{ currentBlogTitle }}
-            </h2>
-            <span v-if="hideAarticleList" class="iconfont icon-fanhui"></span>
+          <!-- 搜索input -->
+          <div class="search">
+            <input @keyup="search" v-model="searchInput" @input="autoCompletion" placeholder="搜索" type="text">
 
           </div>
+          <!-- 文章标题 -->
+          <div :style="{ transform: showTitle ? 'translateY(0)' : 'translateY(50px)',}" @click="onHideArticleList" class="bottom-title" style="display:flex; align-items: center;">
+            <h2 class="article-title"> {{ currentBlogTitle }} </h2>
+            <span v-if="hideAarticleList" class="iconfont icon-fanhui"></span>
+          </div>
         </nav>
+        <!-- 文章分类导航 -->
 
         <div class="container">
+          <!-- 文章预览 -->
           <div :class="{ 'show-blog-viewer': hideAarticleList }" class="article-viewer">
             <div id="md"></div>
           </div>
+          <!-- 文章预览 end -->
           <el-main class="el-main" v-loading="loading">
+            <!-- 文章列表 -->
             <div :class="{ 'hide-article-list': hideAarticleList }" class="article-list">
               <div v-for="item in blogs" :key="item" @click="onArticleItemClick(item.id)" class="article-item">
                 <header>
@@ -74,6 +86,7 @@
                   <span class="text">{{ item.createDate }}</span>
                 </footer>
               </div>
+              <!-- 分页 -->
               <button :class="{ select: currentPage == index }" @click="listByType(index, currentClassify,currentNavIndex)" class="page-button" v-for="index in pageSize" :key="index">
                 {{ index }}
               </button>
@@ -106,6 +119,9 @@ import {
   listDiaryApi,
   clientWidth,
   clientHeight,
+  addBlogApi,
+  autoCompletionApi,
+  searchApi
 } from "../apis/blog";
 export default {
   mounted() {
@@ -137,6 +153,9 @@ export default {
       loading: true,
       blogLayoutY: "0px",
       dirayLayoutY: "0px",
+      searchInput: "",
+      componentsList: [],
+      searchResult: false
     });
     const listNote = (page) => {
       reset();
@@ -147,8 +166,37 @@ export default {
     };
     const goBack = () => {
       emit("goBack");
+
+
     };
+    /**
+     * 搜索
+     */
+    const search = (e) => {
+
+      if (e.keyCode === 13) {
+        state.loading = true;
+        state.searchResult = true
+        state.componentsList.length = 0;
+        state.currentPage=1;
+        searchApi(state.searchInput, 1).then((res) => {
+          state.blogs = res.data.hits.map((item, index, arr) => { return item.sourceAsMap });
+          state.pageSize = res.data.totalHits.value % 10 == 0 ? parseInt(res.data.totalHits.value / 10) : parseInt(res.data.totalHits.value / 10) + 1
+          state.loading = false;
+        })
+
+      }
+    }
+    /**
+     * 自动补全
+     */
+    const autoCompletion = () => {
+      autoCompletionApi(state.searchInput).then((res) => {
+        state.componentsList = res.data
+      })
+    }
     const onArticleItemClick = (id) => {
+      state.componentsList.length = 0;
       getBlogContent(id);
     };
     /**
@@ -180,17 +228,27 @@ export default {
      * 根据类型、页获取数据
      */
     const listByType = (page, type, navIndex) => {
+
       state.currentNavIndex = navIndex;
       state.currentClassify = type;
       state.currentPage = page;
       state.loading = true;
+      if (state.searchResult) {
+        searchApi(state.searchInput, page).then((res) => {
+          state.blogs = res.data.hits.map((item, index, arr) => { return item.sourceAsMap });
+          state.pageSize = res.data.totalHits.value % 10 == 0 ? parseInt(res.data.totalHits.value / 10) : parseInt(res.data.totalHits.value / 10) + 1
+          state.loading = false;
+        })
+        return;
+      }
       getListApi({ page: page, type: type }).then((res) => {
+        state.searchResult = false;
         state.blogs = res.data.data.records;
         state.pageSize = res.data.data.pages;
         state.loading = false;
       });
     };
-    const setBottomPage = () => {};
+    const setBottomPage = () => { };
     /**
      * 初始化
      */
@@ -220,7 +278,7 @@ export default {
       state.showTitle = false;
       state.hideAarticleList = false;
       state.hideNavBar = false;
-         resetPage();
+      resetPage();
     };
     const onShowArticleList = () => {
       reset();
@@ -238,7 +296,7 @@ export default {
       });
     };
     const indexPage = () => {
-         resetPage();
+      resetPage();
       state.showTitle = false;
       state.hideAarticleList = false;
       state.hideNavBar = false;
@@ -257,6 +315,8 @@ export default {
       init,
       onArticleItemClick,
       listByType,
+      autoCompletion,
+      search
     };
   },
   components: {
@@ -301,6 +361,27 @@ export default {
     .blog-layout {
       display: flex;
       flex-direction: column;
+      .search-result {
+        position: absolute;
+        right: 4px;
+        background: #ffffff;
+        top: 51px;
+        z-index: 9999;
+        border-left: 1px #00000021 solid;
+        border-right: 1px #00000021 solid;
+        border-bottom: 1px #00000021 solid;
+        border-radius: 0px;
+        min-width: 300px;
+        padding: 4px;
+        div {
+          cursor: pointer;
+          margin: 6px 0px;
+          padding: 5px 3px;
+        }
+        div:hover {
+          background: #fafafa;
+        }
+      }
     }
     .diary-layout {
       display: flex;
@@ -357,11 +438,11 @@ export default {
             color: #323030;
           }
           .outline {
-              margin-top: 2px;
-              font-size: 13px;
-              color: #6c6c6c;
-              width: 70%;
-              padding: 5px 0px;
+            margin-top: 2px;
+            font-size: 13px;
+            color: #6c6c6c;
+            width: 70%;
+            padding: 5px 0px;
           }
           footer {
             text-align: justify;
@@ -388,6 +469,22 @@ export default {
       overflow: hidden;
       display: flex;
       align-items: center;
+
+      .search {
+        position: absolute;
+        right: 0px;
+        input {
+          border: 1px #dadada solid;
+          border-radius: 100px;
+          padding: 10px 5px;
+          width: 200px;
+          outline: none;
+          transition: all 0.5s;
+        }
+        input:focus {
+          width: 300px;
+        }
+      }
       .bottom-title {
         transition: all 0.5s;
         transform: translateY(50px);
@@ -404,7 +501,6 @@ export default {
         display: flex;
         align-items: center;
         height: 100%;
-
         li:nth-of-type(1) {
           margin-left: 0px;
         }

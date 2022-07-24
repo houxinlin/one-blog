@@ -5,8 +5,8 @@
   box-sizing: border-box !important
 }
 .toastui-editor-contents code{
-  color: #dedede !important;
-  background-color: #333 !important
+  color: #1296db!important;
+  background-color: #0000000a!important;
 }
 .toastui-editor-contents p{
   color: #333 !important;
