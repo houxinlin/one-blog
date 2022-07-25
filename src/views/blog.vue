@@ -48,7 +48,7 @@
         <nav>
           <!-- 文章分类导航 -->
           <div class="list" :style="{ transform: hideNavBar ? 'translateY(-55px)' : 'none', }">
-            <li @click="listByType(1, item.classify,index)" v-for="(item ,index) in classify" :key="item" :class="{'select':currentNavIndex==index}">
+            <li @click="onNavClick(1, item.classify,index)" v-for="(item ,index) in classify" :key="item" :class="{'select':currentNavIndex==index}">
               {{ item.classify }} ({{classifyCount[item.classify] || 0}})
             </li>
           </div>
@@ -160,6 +160,10 @@ export default {
       searchResult: false,
       classifyCount: {}
     });
+    const onNavClick=(page, type, navIndex)=>{
+      state.searchResult=false;
+      listByType(page,type,navIndex);
+    }
     const listNote = (page) => {
       reset();
       state.searchResult = false;
@@ -182,11 +186,12 @@ export default {
         state.searchResult = true
         state.componentsList.length = 0;
         state.currentPage = 1;
+        state.showTitle=false;
         searchApi(state.searchInput, 1).then((res) => {
           state.blogs = res.data.hits.map((item, index, arr) => { return item.sourceAsMap });
           state.pageSize = res.data.totalHits.value % 10 == 0 ? parseInt(res.data.totalHits.value / 10) : parseInt(res.data.totalHits.value / 10) + 1
           state.loading = false;
-          state.hideAarticleList = true;
+          state.hideAarticleList=false;
         })
 
       }
@@ -225,7 +230,7 @@ export default {
         });
         state.showTitle = true;
         state.hideNavBar = true;
-        state.hideAarticleList = !state.hideAarticleList;
+        state.hideAarticleList = true;
       });
     };
     /**
@@ -251,6 +256,7 @@ export default {
         state.searchResult = false;
         state.blogs = res.data.data.records;
         state.pageSize = res.data.data.pages;
+        state.hideAarticleList=false;
         state.loading = false;
       });
     };
@@ -323,7 +329,8 @@ export default {
       onArticleItemClick,
       listByType,
       autoCompletion,
-      search
+      search,
+      onNavClick
     };
   },
   components: {
