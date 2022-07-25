@@ -11,9 +11,11 @@
         <span class="title">HouXinLin Blog</span>
       </div>
       <div class="menu-list">
+        <!-- 单击首页 -->
         <div @click="indexPage()" class="menu-item">首页</div>
-        <!-- <div class="menu-item">归档</div> -->
+        <!-- 单击随笔 -->
         <div @click="listNote(1)" class="menu-item">随笔</div>
+        <!-- 单击日记 -->
         <div @click="intoDiaryPage()" class="menu-item">日记</div>
         <a href="/manager">
           <div class="menu-item">管理</div>
@@ -47,7 +49,7 @@
           <!-- 文章分类导航 -->
           <div class="list" :style="{ transform: hideNavBar ? 'translateY(-55px)' : 'none', }">
             <li @click="listByType(1, item.classify,index)" v-for="(item ,index) in classify" :key="item" :class="{'select':currentNavIndex==index}">
-              {{ item.classify }}
+              {{ item.classify }} ({{classifyCount[item.classify] || 0}})
             </li>
           </div>
           <!-- 搜索input -->
@@ -155,10 +157,12 @@ export default {
       dirayLayoutY: "0px",
       searchInput: "",
       componentsList: [],
-      searchResult: false
+      searchResult: false,
+      classifyCount: {}
     });
     const listNote = (page) => {
       reset();
+      state.searchResult = false;
       state.showTitle = true;
       state.hideNavBar = true;
       state.currentBlogTitle = "随笔";
@@ -173,16 +177,16 @@ export default {
      * 搜索
      */
     const search = (e) => {
-
       if (e.keyCode === 13) {
         state.loading = true;
         state.searchResult = true
         state.componentsList.length = 0;
-        state.currentPage=1;
+        state.currentPage = 1;
         searchApi(state.searchInput, 1).then((res) => {
           state.blogs = res.data.hits.map((item, index, arr) => { return item.sourceAsMap });
           state.pageSize = res.data.totalHits.value % 10 == 0 ? parseInt(res.data.totalHits.value / 10) : parseInt(res.data.totalHits.value / 10) + 1
           state.loading = false;
+          state.hideAarticleList = true;
         })
 
       }
@@ -228,11 +232,13 @@ export default {
      * 根据类型、页获取数据
      */
     const listByType = (page, type, navIndex) => {
-
       state.currentNavIndex = navIndex;
       state.currentClassify = type;
       state.currentPage = page;
       state.loading = true;
+      /**
+       * 如果是搜索查询
+       */
       if (state.searchResult) {
         searchApi(state.searchInput, page).then((res) => {
           state.blogs = res.data.hits.map((item, index, arr) => { return item.sourceAsMap });
@@ -249,22 +255,23 @@ export default {
       });
     };
     const setBottomPage = () => { };
-    /**
-     * 初始化
-     */
+
     const resetPage = () => {
       state.blogLayoutY = "0px";
       state.dirayLayoutY = -state.clientHeight + "px";
     };
+
+    /**
+    初始化
+     */
     const init = () => {
       bus.on("action", (data) => {
-        if (data.page == "diary" && data.opt == "close") {
-          resetPage();
-        }
+        if (data.page == "diary" && data.opt == "close") resetPage();
       });
       listClassifyApi()
         .then((res) => {
-          state.classify = res.data.data;
+          state.classify = res.data.data["list"];
+          state.classifyCount = res.data.data["group_count"];
           state.currentClassify = state.classify[0].classify;
           return getListApi({ page: 1, type: state.classify[0].classify });
         })
