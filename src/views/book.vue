@@ -77,7 +77,7 @@ export default {
       bookeSize: 1,
     });
     const closePage = () => {
-      bus.trigger("action", { page: "diary",opt:"close", data: null });
+      bus.trigger("action", { page: "diary", opt: "close", data: null });
     };
 
     const handlerPage = (index) => {
@@ -211,7 +211,7 @@ export default {
 }
 
 .shadow {
-  box-shadow:4px 4px 11px 0px #9a9a9a
+  box-shadow: 4px 4px 11px 0px #9a9a9a;
 }
 .book {
   position: relative;
@@ -252,16 +252,14 @@ export default {
       text-align: center;
     }
     li:hover {
-      background: #000000;
-      color: #ffffff;
+      background: #bbbbbb17;
     }
     li {
       // transition: all 0.6s;
       display: flex;
       font-size: 12px;
       margin: 10px 0px;
-      padding: 2px 10px;
-      /* background: #ff0000; */
+      padding: 4px 10px;
       color: #000000;
       span:nth-of-type(1) {
       }
@@ -287,6 +285,7 @@ export default {
     font-size: 16px;
     color: #000000;
     text-align: center;
+    margin-top: 20px;
   }
   .date {
     font-size: 12px;

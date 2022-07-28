@@ -14,7 +14,7 @@
         <!-- 单击首页 -->
         <div @click="indexPage()" class="menu-item">首页</div>
         <!-- 单击随笔 -->
-        <div @click="listNote(1)" class="menu-item">随笔</div>
+        <div @click="listNote()" class="menu-item">随笔</div>
         <!-- 单击日记 -->
         <div @click="intoDiaryPage()" class="menu-item">日记</div>
         <a href="/manager">
@@ -58,7 +58,7 @@
 
           </div>
           <!-- 文章标题 -->
-          <div :style="{ transform: showTitle ? 'translateY(0)' : 'translateY(50px)',}" @click="onHideArticleList" class="bottom-title" style="display:flex; align-items: center;">
+          <div :style="{ transform: showTitle ? 'translateY(0)' : 'translateY(50px)',}" @click="hideArticleListClick" class="bottom-title" style="display:flex; align-items: center;">
             <h2 class="article-title"> {{ currentBlogTitle }} </h2>
             <span v-if="hideAarticleList" class="iconfont icon-fanhui"></span>
           </div>
@@ -160,17 +160,17 @@ export default {
       searchResult: false,
       classifyCount: {}
     });
-    const onNavClick=(page, type, navIndex)=>{
-      state.searchResult=false;
-      listByType(page,type,navIndex);
+    const onNavClick = (page, type, navIndex) => {
+      state.searchResult = false;
+      listByType(page, type, navIndex);
     }
-    const listNote = (page) => {
+    const listNote = () => {
       reset();
       state.searchResult = false;
       state.showTitle = true;
       state.hideNavBar = true;
       state.currentBlogTitle = "随笔";
-      listByType(page, "随笔", 0);
+      listByType(1, "随笔", 0);
     };
     const goBack = () => {
       emit("goBack");
@@ -186,12 +186,12 @@ export default {
         state.searchResult = true
         state.componentsList.length = 0;
         state.currentPage = 1;
-        state.showTitle=false;
+        state.showTitle = false;
         searchApi(state.searchInput, 1).then((res) => {
           state.blogs = res.data.hits.map((item, index, arr) => { return item.sourceAsMap });
           state.pageSize = res.data.totalHits.value % 10 == 0 ? parseInt(res.data.totalHits.value / 10) : parseInt(res.data.totalHits.value / 10) + 1
           state.loading = false;
-          state.hideAarticleList=false;
+          state.hideAarticleList = false;
         })
 
       }
@@ -256,12 +256,15 @@ export default {
         state.searchResult = false;
         state.blogs = res.data.data.records;
         state.pageSize = res.data.data.pages;
-        state.hideAarticleList=false;
+        state.hideAarticleList = false;
         state.loading = false;
       });
     };
-    const setBottomPage = () => { };
 
+
+    /**
+     * 重置页面
+     */
     const resetPage = () => {
       state.blogLayoutY = "0px";
       state.dirayLayoutY = -state.clientHeight + "px";
@@ -271,9 +274,7 @@ export default {
     初始化
      */
     const init = () => {
-      bus.on("action", (data) => {
-        if (data.page == "diary" && data.opt == "close") resetPage();
-      });
+      bus.on("action", (data) => { if (data.page == "diary" && data.opt == "close") resetPage(); });
       listClassifyApi()
         .then((res) => {
           state.classify = res.data.data["list"];
@@ -296,23 +297,30 @@ export default {
     const onShowArticleList = () => {
       reset();
     };
-    const onHideArticleList = () => {
+
+
+    const hideArticleListClick = () => {
       if (state.hideAarticleList) {
         reset();
       }
     };
+    /**
+     * 进入日记
+     */
     const intoDiaryPage = () => {
       state.blogLayoutY = state.clientHeight + "px";
       state.dirayLayoutY = "0px";
-      listDiaryApi().then((res) => {
-        bus.trigger("action", { page: "diary", data: res.data.data });
-      });
+      listDiaryApi().then((res) => { bus.trigger("action", { page: "diary", data: res.data.data }); });
     };
+    /**
+     * 进入首页
+     */
     const indexPage = () => {
       resetPage();
       state.showTitle = false;
       state.hideAarticleList = false;
       state.hideNavBar = false;
+      //获取分类下第一个列表文章
       listByType(1, state.classify[0].classify, 0);
     };
 
@@ -322,9 +330,8 @@ export default {
       onShowArticleList,
       listNote,
       indexPage,
-      setBottomPage,
       intoDiaryPage,
-      onHideArticleList,
+      hideArticleListClick,
       init,
       onArticleItemClick,
       listByType,

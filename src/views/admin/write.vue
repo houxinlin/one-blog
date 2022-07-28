@@ -27,8 +27,8 @@
         <el-table-column property="title" label="标题" width="150"></el-table-column>
         <el-table-column property="address" label="操作">
           <template #default="scope">
-            <el-button size="mini" @click="handleCacheEdit(scope.$index, scope.row)">加载</el-button>
-            <el-button size="mini" type="danger" @click="handleCacheDelete(scope.$index, scope.row)">删除</el-button>
+            <el-button size="mini" @click="loadCacheToEdit(scope.$index, scope.row)">加载</el-button>
+            <el-button size="mini" type="danger" @click="deleteCacheBlog(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { onMounted, reactive, toRefs } from "vue";
+import { onMounted, onUnmounted, reactive, toRefs } from "vue";
 import "prismjs/themes/prism.css";
 import "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css";
 import Editor from "@toast-ui/editor";
@@ -55,32 +55,20 @@ import {
 import router from "../../router/index";
 
 export default {
+
   mounted() {
-    let cache = JSON.parse(localStorage.getItem("cacheblog")) || {};
-    var max = 0;
-    let cacheArrays = [];
-    for (var val of Object.keys(cache)) {
-      if (parseInt(val) > max) {
-        max = parseInt(val);
-      }
-      let item = JSON.parse(cache[val]);
-      item.key = val;
-      cacheArrays.push(item);
-    }
-    this.cacheBlog = cacheArrays;
-    this.currentCacheKey = parseInt(max) + 1;
+    this.cacheBlog = JSON.parse(localStorage.getItem("cacheblog")) || {};
+    this.cacheRandomKey = this.randomKey();
+    console.log(this.autoSaveIntervalId);
 
-    setInterval(() => {
-      this.autoSave();
-    }, 1000);
-
+    this.autoSaveIntervalId = setInterval(() => { this.autoSave(); }, 1000);
     let id = router.currentRoute.value.query.id;
     listClassifyApi().then((res) => {
-      this.typeList = res.data.data;
+      this.typeList = res.data.data["list"];
     });
+    //如果存在id，则表示编辑，先获取对应id下的内容
     if (id) {
-      getMarkdownContentApi({ id: id }).then((res) => {
-        console.log(res);
+      getMarkdownContentApi({ id }).then((res) => {
         let blog = res.data.data;
         this.title = blog.blogTitle;
         this.type = blog.classifyId;
@@ -103,41 +91,50 @@ export default {
   },
 
   setup() {
+
     const state = reactive({
+      autoSaveFlag: true,
       cacheBlog: [],
-      currentCacheKey: 0,
       title: "",
       desc: "",
       type: "",
       typeList: [],
       cacheDialogTableVisible: false,
       editor: null,
+      cacheRandomKey: "",
+      autoSaveIntervalId: null
     });
 
+    const randomKey = () => {
+      let strs = "qwertyuiopsdfghjklzxcvbnm123456789QWERTYUIOPASDFGHJKLZXCVBNM";
+      let result = "";
+      for (let i = 0; i < 15; i++) {
+        let index = Math.floor(Math.random() * strs.length);
+        result += strs.charAt(index);
+      }
+      return result;
+    }
     /**
      * 自动保存
      *
      */
     const autoSave = () => {
-      let id = router.currentRoute.value.query.id;
+
       //有id不保存，意思为编辑文章，markdown数量小于10不保存，
-      if (id || state.editor.getMarkdown().length < 10) {
-        return;
-      }
-      var cache = JSON.parse(localStorage.getItem("cacheblog")) || {};
-      cache[state.currentCacheKey] = JSON.stringify({
-        title: state.title,
-        content: state.editor.getMarkdown(),
-      });
+      if (state.editor.getMarkdown().length < 10) return;
+      let cache = JSON.parse(localStorage.getItem("cacheblog")) || {};
+      cache[state.cacheRandomKey] = JSON.stringify({ title: state.title, content: state.editor.getMarkdown() });
       let str = JSON.stringify(cache);
-      localStorage.setItem("cacheblog", str);
+      console.log("保存");
+      if (state.autoSaveFlag) localStorage.setItem("cacheblog", str);
+
     };
     /**
      * 编辑草稿
      */
-    const handleCacheEdit = (i, item) => {
+    const loadCacheToEdit = (i, item) => {
       state.title = item.title;
-      state.currentCacheKey = item.key;
+      state.cacheRandomKey = item.key;
       state.editor = new Editor({
         el: document.querySelector("#markdown"),
         height: "500px",
@@ -153,7 +150,7 @@ export default {
     const loadCacheBlog = (show = false) => {
       let cacheArrays = [];
       let cache = JSON.parse(localStorage.getItem("cacheblog")) || {};
-      for (var val of Object.keys(cache)) {
+      for (let val of Object.keys(cache)) {
         let item = JSON.parse(cache[val]);
         item.key = val;
         cacheArrays.push(item);
@@ -164,18 +161,20 @@ export default {
     /**
      * 删除本地草稿，并重新加载草稿列表
      */
-    const handleCacheDelete = (i, item) => {
+    const deleteCacheBlog = (i, item, showCacheDialog = true) => {
+      state.autoSaveFlag = false;
       let cache = JSON.parse(localStorage.getItem("cacheblog")) || {};
       delete cache[item.key];
+      state.cacheBlog.length = 0;
       localStorage.setItem("cacheblog", JSON.stringify(cache));
-      loadCacheBlog(true);
-      ElMessage({
-        message: "删除成功",
-        type: "success",
-        duration: 1000,
-      });
+      // loadCacheBlog(showCacheDialog);
+      ElMessage({ message: "删除成功", type: "success", duration: 1000, });
+      state.autoSaveFlag = true;
     };
-    const loadCache = () => { };
+    onUnmounted(() => {
+      console.log("aaaa" + state.autoSaveIntervalId);
+      clearInterval(state.autoSaveIntervalId);
+    })
     const onSubmit = () => {
       let body = {
         id: router.currentRoute.value.query.id,
@@ -192,29 +191,26 @@ export default {
         background: "#ffffffcf",
       });
 
+      autoSave();
+      state.autoSaveFlag = false;
+
       addBlogApi(body).then((res) => {
-        console.log(res);
         loading.close();
-        ElMessage({
-          message: "发布成功",
-          type: "success",
-          duration: 1000,
-        });
         setTimeout(() => {
-          router.push({
-            path: "/article",
-          });
+          deleteCacheBlog(0, { "key": state.cacheRandomKey }, false);
+          router.push({ path: "/article", });
         }, 1500);
+        ElMessage({ message: "发布成功", type: "success", duration: 1000, });
       });
     };
     return {
       ...toRefs(state),
-      handleCacheDelete,
+      deleteCacheBlog,
       loadCacheBlog,
-      handleCacheEdit,
-      loadCache,
+      loadCacheToEdit,
       onSubmit,
       autoSave,
+      randomKey
     };
   },
 };
