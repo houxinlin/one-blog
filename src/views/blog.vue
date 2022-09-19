@@ -49,14 +49,14 @@
           <!-- 文章分类导航 -->
           <div class="list" :style="{ transform: hideNavBar ? 'translateY(-55px)' : 'none', }">
             <li @click="onNavClick(1, item.classify,index)" v-for="(item ,index) in classify" :key="item" :class="{'select':currentNavIndex==index}">
-              {{ item.classify }} ({{classifyCount[item.classify] || 0}})
+              {{ item.classify }} 
             </li>
           </div>
           <!-- 搜索input -->
-          <div class="search">
+          <!-- <div class="search">
             <input @keyup="search" v-model="searchInput" @input="autoCompletion" placeholder="搜索" type="text">
 
-          </div>
+          </div> -->
           <!-- 文章标题 -->
           <div :style="{ transform: showTitle ? 'translateY(0)' : 'translateY(50px)',}" @click="hideArticleListClick" class="bottom-title" style="display:flex; align-items: center;">
             <h2 class="article-title"> {{ currentBlogTitle }} </h2>
@@ -277,8 +277,9 @@ export default {
       bus.on("action", (data) => { if (data.page == "diary" && data.opt == "close") resetPage(); });
       listClassifyApi()
         .then((res) => {
-          state.classify = res.data.data["list"];
-          state.classifyCount = res.data.data["group_count"];
+          console.log(res);
+          state.classify = res.data.data;
+          console.log(state.classify);
           state.currentClassify = state.classify[0].classify;
           return getListApi({ page: 1, type: state.classify[0].classify });
         })

@@ -64,7 +64,7 @@ export default {
     this.autoSaveIntervalId = setInterval(() => { this.autoSave(); }, 1000);
     let id = router.currentRoute.value.query.id;
     listClassifyApi().then((res) => {
-      this.typeList = res.data.data["list"];
+      this.typeList = res.data.data;
     });
     //如果存在id，则表示编辑，先获取对应id下的内容
     if (id) {
@@ -119,13 +119,11 @@ export default {
      *
      */
     const autoSave = () => {
-
       //有id不保存，意思为编辑文章，markdown数量小于10不保存，
       if (state.editor.getMarkdown().length < 10) return;
       let cache = JSON.parse(localStorage.getItem("cacheblog")) || {};
       cache[state.cacheRandomKey] = JSON.stringify({ title: state.title, content: state.editor.getMarkdown() });
       let str = JSON.stringify(cache);
-      console.log("保存");
       if (state.autoSaveFlag) localStorage.setItem("cacheblog", str);
 
     };
@@ -172,7 +170,6 @@ export default {
       state.autoSaveFlag = true;
     };
     onUnmounted(() => {
-      console.log("aaaa" + state.autoSaveIntervalId);
       clearInterval(state.autoSaveIntervalId);
     })
     const onSubmit = () => {
