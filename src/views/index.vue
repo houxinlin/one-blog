@@ -1,9 +1,8 @@
 <template>
   <div class="container">
-    <div class="index-body" :style="{
-        transform: 'translateX(' + (hideIndexPage ? clientWidth : 0) + 'px)'}">
+    <div class="index-body" :style="{ transform: 'translateX(' + (state.hideIndexPage ? state.clientWidth : 0) + 'px)'}">
       <nav>
-        <li @click="intoBlogPage()">Blog</li>
+        <li @click="entryBlogPage()">Blog {{clientWidth}}</li>
       </nav>
       <img class="blob1" src="../assets/imgs/blob1.svg" alt="" />
       <img class="blob2" src="../assets/imgs/blob2.svg" alt="" />
@@ -14,67 +13,48 @@
         <span>欢迎来到这里</span>
       </div>
     </div>
-    <div class="blog-body" :style="{
-        transform: 'translateX(' + (hideIndexPage ? 0 : -clientWidth) + 'px)',
-        display: hideBlogPage ? 'none' : 'block',}">
+    <div class="blog-body" :style="{ transform: 'translateX(' + (state.hideIndexPage ? 0 : -state.clientWidth) + 'px)',  
+                                    display: state.hideBlogPage ? 'none' : 'block',}">
       <blogPage />
     </div>
 
   </div>
 </template>
 
-<script>
-import { reactive, toRefs, ref } from "vue";
+<script setup>
+import { reactive, onMounted } from "vue";
 import blogPage from "./blog.vue";
 import bus from "../event/event";
 
-export default {
-  setup() {
-    let state = reactive({
-      hideIndexPage: false,
-      clientWidth: 0,
-      clientHeight: 0,
-      hideBlogPage: true,
-    });
-    const refDiary = ref();
+let state = reactive({
+  hideIndexPage: false,
+  clientWidth: 0,
+  clientHeight: 0,
+  hideBlogPage: true,
+});
+onMounted(() => {
+  state.clientWidth = `${document.documentElement.clientWidth}`;
+  state.clientHeight = `${document.documentElement.clientWidth}`;
+  window.onresize = function () {
+    state.clientWidth = `${document.documentElement.clientWidth}`;
+    state.clientHeight = `${document.documentElement.clientWidth}`;
+  };
+  setTimeout(() => {
+    state.hideBlogPage = false;
+  }, 500);
+})
 
-    const goBack = () => {
-      state.hideIndexPage = false;
-    };
-    const intoDiaryPage = () => {
-      // state.hideDiaryPage = !state.hideDiaryPage;
-    };
-    const clseDiary = () => {
-      // state.hideDiaryPage = true;
-    };
-    const intoBlogPage = () => {
-      state.hideIndexPage = true;
-    };
-    return {
-      ...toRefs(state),
-      clseDiary,
-      intoDiaryPage,
-      intoBlogPage,
-      goBack,
-    };
-  },
-  components: {
-    blogPage,
-  },
-  mounted() {
-    let that = this;
-    this.clientWidth = `${document.documentElement.clientWidth}`;
-    that.clientHeight = `${document.documentElement.clientWidth}`;
-    window.onresize = function () {
-      that.clientWidth = `${document.documentElement.clientWidth}`;
-      that.clientHeight = `${document.documentElement.clientWidth}`;
-    };
-
-
-    setTimeout(() => {
-      that.hideBlogPage = false;
-    }, 500);
-  },
+/**
+ * 进入首页界面
+ */
+const entryIndexPage = () => {
+  state.hideIndexPage = false;
+};
+/**
+ * 进入博客界面
+ */
+const entryBlogPage = () => {
+  state.hideIndexPage = true;
 };
 </script>
 
@@ -94,7 +74,6 @@ export default {
 }
 .hide-diary-page {
   transform: translateY(-800px);
-  // background: #0003;
 }
 @keyframes wave-animation {
   0% {

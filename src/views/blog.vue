@@ -119,8 +119,6 @@ import {
   getMarkdownContentApi,
   listClassifyApi,
   listDiaryApi,
-  clientWidth,
-  clientHeight,
   addBlogApi,
   autoCompletionApi,
   searchApi

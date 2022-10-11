@@ -4,14 +4,14 @@ const constantRoutes = [
   {
     path: "/",
     name: "Index",
-    component:()=>import("@/views/index.vue"),
+    component:()=>import("../views/index.vue"),
 
   },
 
   {
     path: "/login",
     name: "Login",
-    component:()=>import("@/views/admin/login.vue"),
+    component:()=>import("../views/admin/login.vue"),
 
   },
   {
@@ -20,12 +20,12 @@ const constantRoutes = [
     meta: {
       login: true,
     },
-    component:()=>import("@/views/admin/manager.vue"),
+    component:()=>import("../views/admin/manager.vue"),
 
     children: [
       {
         path: "/dashboard",
-        component:()=>import("@/views/admin/dashboard.vue"),
+        component:()=>import("../views/admin/dashboard.vue"),
  
         meta: {
           login: true,
@@ -33,7 +33,7 @@ const constantRoutes = [
       },
       {
         path: "/article",
-        component:()=>import("@/views/admin/article.vue"),
+        component:()=>import("../views/admin/article.vue"),
 
         meta: {
           login: true,
@@ -42,19 +42,19 @@ const constantRoutes = [
       {
         path: "/setting",
         name: "Setting",
-        component:()=>import("@/views/admin/setting.vue")
+        component:()=>import("../views/admin/setting.vue")
    
       },
       {
         path: "/write",
-        component:()=>import("@/views/admin/write.vue"),
+        component:()=>import("../views/admin/write.vue"),
         meta: {
           login: true,
         },
       },
       {
         path: "/browseRecord",
-        component:()=>import("@/views/admin/browseRecord.vue"),
+        component:()=>import("../views/admin/browseRecord.vue"),
   
         meta: {
           login: true,

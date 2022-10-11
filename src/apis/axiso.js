@@ -1,7 +1,7 @@
 import axios from "axios";
 import router from "../router/index";
 const instance = axios.create({
-  baseURL:process.env.VUE_APP_REQUEST_URL,
+  baseURL:import.meta.env.VITE_APP_REQUEST_URL,
   withCredentials: true,
 });
 

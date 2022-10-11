@@ -73,7 +73,7 @@ export default {
       zIndex: [],
       stateMap: new Map(),
       palying: false,
-      icon: require("../assets/imgs/jihe.jpeg"),
+      icon: "",
       bookeSize: 1,
     });
     const closePage = () => {
