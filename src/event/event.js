@@ -1,11 +1,9 @@
 class Event {
   constructor() {
-    console.log("构造");
     this.events = {};
   }
 
   on(eventName, fn) {
-    console.log("订阅" + eventName);
     this.events[eventName] = this.events[eventName] || [];
     this.events[eventName].push(fn);
   }

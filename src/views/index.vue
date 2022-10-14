@@ -7,7 +7,8 @@
       <img class="blob1" src="../assets/imgs/blob1.svg" alt="" />
       <img class="blob2" src="../assets/imgs/blob2.svg" alt="" />
       <div class="name">
-        <div> <span>Hello, I'm HouXinLin </span>
+        <div>
+           <span>Hello, I'm HouXinLin </span>
           <span>👋</span>
         </div>
         <span>欢迎来到这里</span>
@@ -42,6 +43,12 @@ onMounted(() => {
   setTimeout(() => {
     state.hideBlogPage = false;
   }, 500);
+
+  bus.on("action",(data)=>{
+    if(data=="TO-INDEX"){
+      entryIndexPage();
+    }
+  })
 })
 
 /**

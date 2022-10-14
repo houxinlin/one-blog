@@ -1,27 +1,28 @@
 <template>
   <div class="body">
     <!-- 左侧aside -->
-    <aside>
+    <aside @click="toIndexPage()">
       <div class="background">
+        <!-- 背景图片 -->
         <img src="../assets/background/bck.jpg" alt="" />
+        <!-- 遮罩 -->
         <div class="masker"></div>
       </div>
+      <!-- 头像和网名 -->
       <img class="avatar" src="../assets/avd.png" alt="" />
       <div>
         <span class="title">HouXinLin Blog</span>
       </div>
       <div class="menu-list">
         <!-- 单击首页 -->
-        <div @click="indexPage()" class="menu-item">首页</div>
+        <div @click.stop="listBlogIndex()" class="menu-item">首页</div>
         <!-- 单击随笔 -->
-        <div @click="listNote()" class="menu-item">随笔</div>
+        <div @click.stop="listNote()" class="menu-item">随笔</div>
         <!-- 单击日记 -->
-        <div @click="intoDiaryPage()" class="menu-item">日记</div>
+        <div @click.stop="showDiary()" class="menu-item">日记</div>
         <a href="/manager">
           <div class="menu-item">管理</div>
         </a>
-        <div class="menu-item">
-        </div>
       </div>
       <div class="site">
         <a target="_blank" href="https://github.com/houxinlin">
@@ -34,22 +35,22 @@
     </aside>
     <!-- 左侧aside end -->
     <section>
-      <div class="diary-layout layout-item" :style="{'transform':'translateY('+(dirayLayoutY)+')'}">
+      <div class="diary-layout layout-item" :style="{'transform':'translateY('+(state.dirayLayoutY)+')'}">
         <diary ref="refDiary"></diary>
       </div>
       <!-- //transform: translateY(10px); -->
-      <div :style="{'transform':'translateY('+blogLayoutY+')'}" class="blog-layout layout-item">
+      <div :style="{'transform':'translateY('+state.blogLayoutY+')'}" class="blog-layout layout-item">
         <!-- 自动补全结果 -->
-        <div v-if="componentsList.length>0" class="search-result">
+        <!-- <div v-if="componentsList.length>0" class="search-result">
           <template v-for="item in componentsList" :key="item">
-            <div @click="onArticleItemClick(item.hit.sourceAsMap.id)">{{item.hit.sourceAsMap.blogTitle}}</div>
+            <div @click="articleDetail(item.hit.sourceAsMap.id)">{{item.hit.sourceAsMap.blogTitle}}</div>
           </template>
-        </div>
+        </div> -->
         <nav>
           <!-- 文章分类导航 -->
-          <div class="list" :style="{ transform: hideNavBar ? 'translateY(-55px)' : 'none', }">
-            <li @click="onNavClick(1, item.classify,index)" v-for="(item ,index) in classify" :key="item" :class="{'select':currentNavIndex==index}">
-              {{ item.classify }} 
+          <div class="list" :style="{ transform: state.hideNavBar ? 'translateY(-55px)' : 'none', }">
+            <li @click="listBlogByType(1, item.classify,index)" v-for="(item ,index) in state.classify" :key="item" :class="{'select':state.currentNavIndex==index}">
+              {{ item.classify }}
             </li>
           </div>
           <!-- 搜索input -->
@@ -58,23 +59,23 @@
 
           </div> -->
           <!-- 文章标题 -->
-          <div :style="{ transform: showTitle ? 'translateY(0)' : 'translateY(50px)',}" @click="hideArticleListClick" class="bottom-title" style="display:flex; align-items: center;">
-            <h2 class="article-title"> {{ currentBlogTitle }} </h2>
-            <span v-if="hideAarticleList" class="iconfont icon-fanhui"></span>
+          <div :style="{ transform: state.showTitle ? 'translateY(0)' : 'translateY(50px)',}" @click="hideArticleList" class="bottom-title" style="display:flex; align-items: center;">
+            <h2 class="article-title"> {{ state.currentBlogTitle }} </h2>
+            <span v-if="state.hideAarticleList" class="iconfont icon-fanhui"></span>
           </div>
         </nav>
         <!-- 文章分类导航 -->
 
         <div class="container">
           <!-- 文章预览 -->
-          <div :class="{ 'show-blog-viewer': hideAarticleList }" class="article-viewer">
+          <div :class="{ 'show-blog-viewer': state.hideAarticleList }" class="article-viewer">
             <div id="md"></div>
           </div>
           <!-- 文章预览 end -->
-          <el-main class="el-main" v-loading="loading">
+          <el-main class="el-main" v-loading="state.loading">
             <!-- 文章列表 -->
-            <div :class="{ 'hide-article-list': hideAarticleList }" class="article-list">
-              <div v-for="item in blogs" :key="item" @click="onArticleItemClick(item.id)" class="article-item">
+            <div :class="{ 'hide-article-list': state.hideAarticleList }" class="article-list">
+              <div v-for="item in state.blogs" :key="item" @click="articleDetail(item.id)" class="article-item">
                 <header>
                   <span class="title">{{ item.blogTitle }}</span>
                 </header>
@@ -89,7 +90,7 @@
                 </footer>
               </div>
               <!-- 分页 -->
-              <button :class="{ select: currentPage == index }" @click="listByType(index, currentClassify,currentNavIndex)" class="page-button" v-for="index in pageSize" :key="index">
+              <button :class="{ select: state.currentPage == index }" @click="listByType(index, state.currentClassify,state.currentNavIndex)" class="page-button" v-for="index in pageSize" :key="index">
                 {{ index }}
               </button>
             </div>
@@ -101,13 +102,13 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import "prismjs/themes/prism.css";
 import "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css";
 import Prism from "prismjs";
 import codeSyntaxHighlight from "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js";
 import "../assets/css/toastui-editor-plugin-code-syntax-highlight.css";
-import { reactive, toRefs } from "vue";
+import { reactive, toRefs, onMounted } from "vue";
 import "../assets/font.css";
 import "../assets/font/font-icon/iconfont.css";
 import diary from "./book.vue";
@@ -119,230 +120,221 @@ import {
   getMarkdownContentApi,
   listClassifyApi,
   listDiaryApi,
-  addBlogApi,
   autoCompletionApi,
   searchApi
 } from "../apis/blog";
-export default {
-  mounted() {
-    this.init();
-    let that = this;
-    this.clientWidth = `${document.documentElement.clientWidth}`;
-    this.clientHeight = `${document.documentElement.clientWidth}`;
-    window.onresize = function () {
-      that.clientWidth = `${document.documentElement.clientWidth}`;
-      that.clientHeight = `${document.documentElement.clientWidth}`;
-    };
-    this.dirayLayoutY = -this.clientHeight + "px";
-  },
-  setup(props, { emit }) {
-    const state = reactive({
-      clientWidth: 0,
-      clientHeight: 0,
-      hideDiaryLayout: false,
-      hideAarticleList: false,
-      blogs: [],
-      classify: [],
-      currentBlogTitle: "",
-      pageSize: 0,
-      currentClassify: "",
-      showTitle: false,
-      currentPage: 1,
-      currentNavIndex: 0,
-      hideNavBar: false,
-      loading: true,
-      blogLayoutY: "0px",
-      dirayLayoutY: "0px",
-      searchInput: "",
-      componentsList: [],
-      searchResult: false,
-      classifyCount: {}
-    });
-    const onNavClick = (page, type, navIndex) => {
-      state.searchResult = false;
-      listByType(page, type, navIndex);
-    }
-    const listNote = () => {
-      reset();
-      state.searchResult = false;
-      state.showTitle = true;
-      state.hideNavBar = true;
-      state.currentBlogTitle = "随笔";
-      listByType(1, "随笔", 0);
-    };
-    const goBack = () => {
-      emit("goBack");
 
-
-    };
-    /**
-     * 搜索
-     */
-    const search = (e) => {
-      if (e.keyCode === 13) {
-        state.loading = true;
-        state.searchResult = true
-        state.componentsList.length = 0;
-        state.currentPage = 1;
-        state.showTitle = false;
-        searchApi(state.searchInput, 1).then((res) => {
-          state.blogs = res.data.hits.map((item, index, arr) => { return item.sourceAsMap });
-          state.pageSize = res.data.totalHits.value % 10 == 0 ? parseInt(res.data.totalHits.value / 10) : parseInt(res.data.totalHits.value / 10) + 1
-          state.loading = false;
-          state.hideAarticleList = false;
-        })
-
-      }
-    }
-    /**
-     * 自动补全
-     */
-    const autoCompletion = () => {
-      autoCompletionApi(state.searchInput).then((res) => {
-        state.componentsList = res.data
-      })
-    }
-    const onArticleItemClick = (id) => {
-      state.componentsList.length = 0;
-      getBlogContent(id);
-    };
-    /**
-     * 获取博客内容
-     */
-    const getBlogContent = (id) => {
-      state.loading = true;
-      getMarkdownContentApi({ id: id }).then((res) => {
-        state.loading = false;
-        const value = res.data.data.markdownContent;
-        state.currentBlogTitle = res.data.data.blogTitle;
-        // state.hideAarticleList = !state.hideAarticleList;
-        /**
-         * 博客预览
-         */
-        new Viewer({
-          el: document.querySelector("#md"),
-          previewStyle: "vertical",
-          height: "500px",
-          plugins: [[codeSyntaxHighlight, { highlighter: Prism }]],
-          initialValue: value,
-        });
-        state.showTitle = true;
-        state.hideNavBar = true;
-        state.hideAarticleList = true;
-      });
-    };
-    /**
-     * 根据类型、页获取数据
-     */
-    const listByType = (page, type, navIndex) => {
-      state.currentNavIndex = navIndex;
-      state.currentClassify = type;
-      state.currentPage = page;
-      state.loading = true;
-      /**
-       * 如果是搜索查询
-       */
-      if (state.searchResult) {
-        searchApi(state.searchInput, page).then((res) => {
-          state.blogs = res.data.hits.map((item, index, arr) => { return item.sourceAsMap });
-          state.pageSize = res.data.totalHits.value % 10 == 0 ? parseInt(res.data.totalHits.value / 10) : parseInt(res.data.totalHits.value / 10) + 1
-          state.loading = false;
-        })
-        return;
-      }
-      getListApi({ page: page, type: type }).then((res) => {
-        state.searchResult = false;
-        state.blogs = res.data.data.records;
-        state.pageSize = res.data.data.pages;
-        state.hideAarticleList = false;
-        state.loading = false;
-      });
-    };
-
-
-    /**
-     * 重置页面
-     */
-    const resetPage = () => {
-      state.blogLayoutY = "0px";
-      state.dirayLayoutY = -state.clientHeight + "px";
-    };
-
-    /**
-    初始化
-     */
-    const init = () => {
-      bus.on("action", (data) => { if (data.page == "diary" && data.opt == "close") resetPage(); });
-      listClassifyApi()
-        .then((res) => {
-          console.log(res);
-          state.classify = res.data.data;
-          console.log(state.classify);
-          state.currentClassify = state.classify[0].classify;
-          return getListApi({ page: 1, type: state.classify[0].classify });
-        })
-        .then((res) => {
-          state.blogs = res.data.data.records;
-          state.pageSize = res.data.data.pages;
-          state.loading = false;
-        });
-    };
-    const reset = () => {
-      state.showTitle = false;
-      state.hideAarticleList = false;
-      state.hideNavBar = false;
-      resetPage();
-    };
-    const onShowArticleList = () => {
-      reset();
-    };
-
-
-    const hideArticleListClick = () => {
-      if (state.hideAarticleList) {
-        reset();
-      }
-    };
-    /**
-     * 进入日记
-     */
-    const intoDiaryPage = () => {
-      state.blogLayoutY = state.clientHeight + "px";
-      state.dirayLayoutY = "0px";
-      listDiaryApi().then((res) => { bus.trigger("action", { page: "diary", data: res.data.data }); });
-    };
-    /**
-     * 进入首页
-     */
-    const indexPage = () => {
-      resetPage();
-      state.showTitle = false;
-      state.hideAarticleList = false;
-      state.hideNavBar = false;
-      //获取分类下第一个列表文章
-      listByType(1, state.classify[0].classify, 0);
-    };
-
-    return {
-      ...toRefs(state),
-      goBack,
-      onShowArticleList,
-      listNote,
-      indexPage,
-      intoDiaryPage,
-      hideArticleListClick,
-      init,
-      onArticleItemClick,
-      listByType,
-      autoCompletion,
-      search,
-      onNavClick
-    };
-  },
-  components: {
-    diary,
-  },
+const state = reactive({
+  clientWidth: 0,
+  clientHeight: 0,
+  hideDiaryLayout: false,
+  hideAarticleList: false,
+  blogs: [],
+  classify: [],
+  currentBlogTitle: "",
+  pageSize: 0,
+  currentClassify: "",
+  showTitle: false,
+  currentPage: 1,
+  currentNavIndex: 0,
+  hideNavBar: false,
+  loading: true,
+  blogLayoutY: "0px",
+  dirayLayoutY: "0px",
+  searchInput: "",
+  componentsList: [],
+  searchResult: false,
+  classifyCount: {}
+});
+onMounted(() => {
+  init();
+  state.clientWidth = `${document.documentElement.clientWidth}`;
+  state.clientHeight = `${document.documentElement.clientWidth}`;
+  window.onresize = function () {
+    state.clientWidth = `${document.documentElement.clientWidth}`;
+    state.clientHeight = `${document.documentElement.clientWidth}`;
+  };
+  state.dirayLayoutY = -state.clientHeight + "px";
+})
+/**
+ * 转到首页
+ */
+const toIndexPage = () => {
+  bus.trigger("action", "TO-INDEX");
+}
+/**
+ * 根据类类型列举博客
+ */
+const listBlogByType = (page, type, navIndex) => {
+  state.searchResult = false;
+  listByType(page, type, navIndex);
+}
+/**
+ * 列举随笔
+ */
+const listNote = () => {
+  reset();
+  state.searchResult = false;
+  state.showTitle = true;
+  state.hideNavBar = true;
+  state.currentBlogTitle = "随笔";
+  listByType(1, "随笔", 0);
 };
+
+/**
+ * 搜索
+ */
+const search = (e) => {
+  if (e.keyCode === 13) {
+    state.loading = true;
+    state.searchResult = true
+    state.componentsList.length = 0;
+    state.currentPage = 1;
+    state.showTitle = false;
+    searchApi(state.searchInput, 1).then((res) => {
+      state.blogs = res.data.hits.map((item, index, arr) => { return item.sourceAsMap });
+      state.pageSize = res.data.totalHits.value % 10 == 0 ? parseInt(res.data.totalHits.value / 10) : parseInt(res.data.totalHits.value / 10) + 1
+      state.loading = false;
+      state.hideAarticleList = false;
+    })
+
+  }
+}
+/**
+ * 自动补全
+ */
+const autoCompletion = () => {
+  autoCompletionApi(state.searchInput).then((res) => {
+    state.componentsList = res.data
+  })
+}
+/**
+ * 文章详细
+ */
+const articleDetail = (id) => {
+  state.componentsList.length = 0;
+  getBlogContent(id);
+};
+/**
+ * 获取博客内容
+ */
+const getBlogContent = (id) => {
+  state.loading = true;
+  getMarkdownContentApi({ id: id }).then((res) => {
+    state.loading = false;
+    const value = res.data.data.markdownContent;
+    state.currentBlogTitle = res.data.data.blogTitle;
+    // state.hideAarticleList = !state.hideAarticleList;
+    /**
+     * 博客预览
+     */
+    new Viewer({
+      el: document.querySelector("#md"),
+      previewStyle: "vertical",
+      height: "500px",
+      plugins: [[codeSyntaxHighlight, { highlighter: Prism }]],
+      initialValue: value,
+    });
+    state.showTitle = true;
+    state.hideNavBar = true;
+    state.hideAarticleList = true;
+  });
+};
+/**
+ * 根据类型、页获取数据
+ */
+const listByType = (page, type, navIndex) => {
+  state.currentNavIndex = navIndex;
+  state.currentClassify = type;
+  state.currentPage = page;
+  state.loading = true;
+  /**
+   * 如果是搜索查询
+   */
+  if (state.searchResult) {
+    searchApi(state.searchInput, page).then((res) => {
+      state.blogs = res.data.hits.map((item, index, arr) => { return item.sourceAsMap });
+      state.pageSize = res.data.totalHits.value % 10 == 0 ? parseInt(res.data.totalHits.value / 10) : parseInt(res.data.totalHits.value / 10) + 1
+      state.loading = false;
+    })
+    return;
+  }
+  getListApi({ page: page, type: type }).then((res) => {
+    state.searchResult = false;
+    state.blogs = res.data.data.records;
+    state.pageSize = res.data.data.pages;
+    state.hideAarticleList = false;
+    state.loading = false;
+  });
+};
+
+
+/**
+ * 重置页面
+ */
+const resetPage = () => {
+  state.blogLayoutY = "0px";
+  state.dirayLayoutY = -state.clientHeight + "px";
+};
+
+/**
+初始化
+ */
+const init = () => {
+  bus.on("action", (data) => { if (data.page == "diary" && data.opt == "close") resetPage(); });
+  listClassifyApi()
+    .then((res) => {
+      state.classify = res.data.data;
+      state.currentClassify = state.classify[0].classify;
+      return getListApi({ page: 1, type: state.classify[0].classify });
+    })
+    .then((res) => {
+      state.blogs = res.data.data.records;
+      state.pageSize = res.data.data.pages;
+      state.loading = false;
+    });
+};
+const reset = () => {
+  state.showTitle = false;
+  state.hideAarticleList = false;
+  state.hideNavBar = false;
+  resetPage();
+};
+const onShowArticleList = () => {
+  reset();
+};
+
+
+const hideArticleList = () => {
+  if (state.hideAarticleList) {
+    reset();
+  }
+};
+/**
+ * 进入日记
+ */
+const showDiary = () => {
+  state.blogLayoutY = state.clientHeight + "px";
+  state.dirayLayoutY = "0px";
+  listDiaryApi().then((res) => { bus.trigger("action", { page: "diary", data: res.data.data }); });
+};
+/**
+ * 进入首页
+ */
+const listBlogIndex = () => {
+  resetPage();
+  state.showTitle = false;
+  state.hideAarticleList = false;
+  state.hideNavBar = false;
+  //获取分类下第一个列表文章
+  listByType(1, state.classify[0].classify, 0);
+};
+
+
+// components: {
+//   diary,
+//   },
+// };
 </script>
 
 <style lang="less" scoped>
