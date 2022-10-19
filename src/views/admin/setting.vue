@@ -35,6 +35,17 @@
         </el-tabs>
       </div>
     </el-card>
+
+      <el-card class="box-card">
+      <template #header>
+        <div class="card-header">
+          <span>博主信息</span>
+          <el-button class="button" type="text"></el-button>
+        </div>
+      </template>
+      <div style="">
+      </div>
+    </el-card>
   </div>
 </template>
 

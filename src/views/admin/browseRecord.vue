@@ -1,5 +1,5 @@
 <template>
-  <el-table v-loading="loading" :data="ipList" height="550" style="width: 100%">
+  <el-table v-loading="loading" :data="ipList" style="width: 100%">
     <el-table-column prop="ipAddress" label="ip" />
     <el-table-column prop="ipCity" label="城市"  />
     <el-table-column prop="ipProvince" label="省份" />

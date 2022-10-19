@@ -25,12 +25,8 @@
         </a>
       </div>
       <div class="site">
-        <a target="_blank" href="https://github.com/houxinlin">
-          <img src="../assets/imgs/github.svg" alt="" />
-        </a>
-        <a target="_blank" href="https://juejin.cn/user/588993963758215/posts">
-          <img src="../assets/imgs/juejin.svg" alt="" />
-        </a>
+        <a target="_blank" href="https://github.com/houxinlin"> <img src="../assets/imgs/github.svg" alt="" /> </a>
+        <a target="_blank" href="https://juejin.cn/user/588993963758215/posts"> <img src="../assets/imgs/juejin.svg" alt="" /></a>
       </div>
     </aside>
     <!-- 左侧aside end -->
@@ -90,7 +86,7 @@
                 </footer>
               </div>
               <!-- 分页 -->
-              <button :class="{ select: state.currentPage == index }" @click="listByType(index, state.currentClassify,state.currentNavIndex)" class="page-button" v-for="index in pageSize" :key="index">
+              <button :class="{ select: state.currentPage == index }" @click="listByType(index, state.currentClassify,state.currentNavIndex)" class="page-button" v-for="index in state.pageSize" :key="index">
                 {{ index }}
               </button>
             </div>
@@ -254,7 +250,7 @@ const listByType = (page, type, navIndex) => {
   if (state.searchResult) {
     searchApi(state.searchInput, page).then((res) => {
       state.blogs = res.data.hits.map((item, index, arr) => { return item.sourceAsMap });
-      state.pageSize = res.data.totalHits.value % 10 == 0 ? parseInt(res.data.totalHits.value / 10) : parseInt(res.data.totalHits.value / 10) + 1
+      state.pageSize = res.data.pages
       state.loading = false;
     })
     return;

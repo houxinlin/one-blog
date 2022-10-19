@@ -290,6 +290,7 @@ export default {
   .date {
     font-size: 12px;
     color: #000000;
+    margin-top: 10px;
   }
   article {
     overflow-y: auto;
