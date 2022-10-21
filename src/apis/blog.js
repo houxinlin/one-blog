@@ -55,3 +55,10 @@ export function searchApi(q,from) {
     params: {q,from}
   })
 }
+
+export function getConfigInfo() {
+  return axios({
+    url: '/api/blog/getConfigs',
+    method: 'get'
+  })
+}

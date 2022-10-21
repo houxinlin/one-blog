@@ -57,8 +57,19 @@ export function removeClassifyApi(data) {
     data
   })
 }
+export function restPassword(data) {
+  return axios({
+    url: '/api/admin/restPassword',
+    method: 'post',
+    data
+  })
+}
 
-
-
-
+export function configInfo(data) {
+  return axios({
+    url: '/api/admin/configInfo',
+    method: 'post',
+    data
+  })
+}
 

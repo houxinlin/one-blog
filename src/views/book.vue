@@ -211,7 +211,7 @@ export default {
 }
 
 .shadow {
-  box-shadow: 4px 4px 11px 0px #9a9a9a;
+  // box-shadow: 4px 4px 11px 0px #9a9a9a;
 }
 .book {
   position: relative;
@@ -225,7 +225,7 @@ export default {
     // box-shadow: 3px -1px 7px #000000;
   }
   .book-page:nth-of-type(1) .after {
-    box-shadow: -3px 0px 2px #dadada;
+   // box-shadow: -3px 0px 2px #dadada;
   }
   .book-page {
     cursor: pointer;

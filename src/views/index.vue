@@ -2,16 +2,11 @@
   <div class="container">
     <div class="index-body" :style="{ transform: 'translateX(' + (state.hideIndexPage ? state.clientWidth : 0) + 'px)'}">
       <nav>
-        <li @click="entryBlogPage()">Blog {{clientWidth}}</li>
+        <li @click="entryBlogPage()">Blog</li>
       </nav>
       <img class="blob1" src="../assets/imgs/blob1.svg" alt="" />
       <img class="blob2" src="../assets/imgs/blob2.svg" alt="" />
-      <div class="name">
-        <div>
-           <span>Hello, I'm HouXinLin </span>
-          <span>👋</span>
-        </div>
-        <span>欢迎来到这里</span>
+      <div v-html="state.welcomeText" class="name">
       </div>
     </div>
     <div class="blog-body" :style="{ transform: 'translateX(' + (state.hideIndexPage ? 0 : -state.clientWidth) + 'px)',  
@@ -26,14 +21,28 @@
 import { reactive, onMounted } from "vue";
 import blogPage from "./blog.vue";
 import bus from "../event/event";
-
+import { getConfigInfo } from "../apis/blog";
 let state = reactive({
   hideIndexPage: false,
   clientWidth: 0,
   clientHeight: 0,
   hideBlogPage: true,
+  welcomeText: ""
 });
+
 onMounted(() => {
+  let config = localStorage.getItem("config") || null;
+  let back = new Image();
+  // back.src = `${import.meta.env.VITE_APP_REQUEST_URL}static/bck`;
+  if (config != null) {
+    state.welcomeText = JSON.parse(config)["blog_welcome_text"];
+    bus.trigger("onConfig", JSON.parse(config));
+  }
+  getConfigInfo().then((res) => {
+    localStorage.setItem("config", JSON.stringify(res.data))
+    state.welcomeText = res.data["blog_welcome_text"]
+    bus.trigger("onConfig", res.data);
+  })
   state.clientWidth = `${document.documentElement.clientWidth}`;
   state.clientHeight = `${document.documentElement.clientWidth}`;
   window.onresize = function () {
@@ -44,8 +53,8 @@ onMounted(() => {
     state.hideBlogPage = false;
   }, 500);
 
-  bus.on("action",(data)=>{
-    if(data=="TO-INDEX"){
+  bus.on("action", (data) => {
+    if (data == "TO-INDEX") {
       entryIndexPage();
     }
   })

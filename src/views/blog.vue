@@ -1,17 +1,14 @@
 <template>
   <div class="body">
     <!-- 左侧aside -->
-    <aside @click="toIndexPage()">
+    <aside :style="{'background-image': 'url('+host+'static/bck'}" @click="toIndexPage()">
       <div class="background">
-        <!-- 背景图片 -->
-        <img src="../assets/background/bck.jpg" alt="" />
-        <!-- 遮罩 -->
         <div class="masker"></div>
       </div>
       <!-- 头像和网名 -->
-      <img class="avatar" src="../assets/avd.png" alt="" />
+      <img class="avatar" :src="host+'static/av'" alt="" />
       <div>
-        <span class="title">HouXinLin Blog</span>
+        <span class="title">{{state.blogTitle}}</span>
       </div>
       <div class="menu-list">
         <!-- 单击首页 -->
@@ -31,10 +28,10 @@
     </aside>
     <!-- 左侧aside end -->
     <section>
-      <div class="diary-layout layout-item" :style="{'transform':'translateY('+(state.dirayLayoutY)+')'}">
+      <div class="diary-layout layout-item" :style="{'transform':state.dirayTransformValue,'background-image': 'url('+host+'static/bck'}">
+        <div class="mask"></div>
         <diary ref="refDiary"></diary>
       </div>
-      <!-- //transform: translateY(10px); -->
       <div :style="{'transform':'translateY('+state.blogLayoutY+')'}" class="blog-layout layout-item">
         <!-- 自动补全结果 -->
         <!-- <div v-if="componentsList.length>0" class="search-result">
@@ -61,7 +58,6 @@
           </div>
         </nav>
         <!-- 文章分类导航 -->
-
         <div class="container">
           <!-- 文章预览 -->
           <div :class="{ 'show-blog-viewer': state.hideAarticleList }" class="article-viewer">
@@ -116,15 +112,18 @@ import {
   getMarkdownContentApi,
   listClassifyApi,
   listDiaryApi,
+  getConfigInfo,
   autoCompletionApi,
   searchApi
 } from "../apis/blog";
+const host = import.meta.env.VITE_APP_REQUEST_URL;
 
 const state = reactive({
   clientWidth: 0,
   clientHeight: 0,
   hideDiaryLayout: false,
   hideAarticleList: false,
+  blogTitle: "",
   blogs: [],
   classify: [],
   currentBlogTitle: "",
@@ -140,7 +139,9 @@ const state = reactive({
   searchInput: "",
   componentsList: [],
   searchResult: false,
-  classifyCount: {}
+  classifyCount: {},
+  dirayVisable: false,
+  dirayTransformValue: "0px"
 });
 onMounted(() => {
   init();
@@ -151,6 +152,7 @@ onMounted(() => {
     state.clientHeight = `${document.documentElement.clientWidth}`;
   };
   state.dirayLayoutY = -state.clientHeight + "px";
+  state.dirayTransformValue = `translateX(${state.dirayLayoutY})`;
 })
 /**
  * 转到首页
@@ -271,6 +273,9 @@ const listByType = (page, type, navIndex) => {
 const resetPage = () => {
   state.blogLayoutY = "0px";
   state.dirayLayoutY = -state.clientHeight + "px";
+  state.dirayVisable = false;
+
+  state.dirayTransformValue = `translateX(${state.dirayLayoutY})`;
 };
 
 /**
@@ -278,9 +283,10 @@ const resetPage = () => {
  */
 const init = () => {
   bus.on("action", (data) => { if (data.page == "diary" && data.opt == "close") resetPage(); });
+  bus.on("onConfig", (data) => { state.blogTitle = data["sys_blog_title"]; });
   listClassifyApi()
     .then((res) => {
-      state.classify = res.data.data;
+      state.classify = res.data;
       state.currentClassify = state.classify[0].classify;
       return getListApi({ page: 1, type: state.classify[0].classify });
     })
@@ -289,15 +295,13 @@ const init = () => {
       state.pageSize = res.data.data.pages;
       state.loading = false;
     });
+
 };
 const reset = () => {
   state.showTitle = false;
   state.hideAarticleList = false;
   state.hideNavBar = false;
   resetPage();
-};
-const onShowArticleList = () => {
-  reset();
 };
 
 
@@ -312,6 +316,8 @@ const hideArticleList = () => {
 const showDiary = () => {
   state.blogLayoutY = state.clientHeight + "px";
   state.dirayLayoutY = "0px";
+  state.dirayVisable = true;
+  state.dirayTransformValue = `none`;
   listDiaryApi().then((res) => { bus.trigger("action", { page: "diary", data: res.data.data }); });
 };
 /**
@@ -323,14 +329,12 @@ const listBlogIndex = () => {
   state.hideAarticleList = false;
   state.hideNavBar = false;
   //获取分类下第一个列表文章
-  listByType(1, state.classify[0].classify, 0);
+  if (state.currentBlogTitle == "随笔") {
+    listByType(1, state.classify[0].classify, 0);
+  }
 };
 
 
-// components: {
-//   diary,
-//   },
-// };
 </script>
 
 <style lang="less" scoped>
@@ -362,13 +366,14 @@ const listBlogIndex = () => {
   section {
     position: absolute;
     background: #ffffff;
-    top: 5px;
+    top: 0px;
     right: 0px;
-    bottom: 5px;
-    left: 322px;
+    bottom: 0px;
+    left: 300px;
     .blog-layout {
       display: flex;
       flex-direction: column;
+      margin: 20px;
       .search-result {
         position: absolute;
         right: 4px;
@@ -395,6 +400,23 @@ const listBlogIndex = () => {
       display: flex;
       justify-content: center;
       align-items: center;
+      transition: all 0.5s;
+      background-attachment: scroll;
+      background-size: auto;
+      background-position-x: -300px;
+      img {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+      }
+      .mask {
+        background: #000000b5;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+      }
     }
     .layout-item {
       transition: all 0.5s;
@@ -530,13 +552,19 @@ const listBlogIndex = () => {
   }
   aside {
     text-align: center;
+    padding-top: 60px;
     position: fixed;
     top: 0px;
     left: 0px;
     bottom: 0px;
     width: 300px;
-    background: #ffffff;
-    background-image: url("/background/bck1.jpg");
+    z-index: 999;
+    background-attachment: scroll;
+    background-size: auto;
+    width: 300px;
+    z-index: 999;
+    // background-image: url();
+
     .menu-list {
       color: #ffffff;
       .menu-item {
@@ -562,7 +590,7 @@ const listBlogIndex = () => {
       div {
         height: 100%;
         width: 100%;
-        background: #000000de;
+        background: #000000b5;
         position: absolute;
         left: 0px;
         top: 0px;
@@ -596,15 +624,6 @@ const listBlogIndex = () => {
       font-family: "Windsong";
       font-size: 2.8rem;
       color: #ffffff;
-    }
-    .avatar {
-      margin-top: 3rem;
-      width: 8rem;
-      height: 8rem;
-      border-radius: 50%;
-      border: 4px solid #fff;
-      box-shadow: 0 1px 4px #0000004d;
-      object-fit: cover;
     }
   }
 }

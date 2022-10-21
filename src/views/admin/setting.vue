@@ -3,19 +3,16 @@
     <el-card class="box-card">
       <template #header>
         <div class="card-header">
-          <span>系统值</span>
+          <span>登录密码</span>
           <el-button class="button" type="text"></el-button>
         </div>
       </template>
       <div style="display:flex">
-        <el-select @change="onConfigKeyChange" v-model="configSelectKey" placeholder="Select">
-          <el-option v-for="(item, index) in sysConfigs" :key="index" :label="item.sysKey" :value="item.sysKey">
-          </el-option>
-        </el-select>
-        <el-input v-model="currentValue" style="width:200px"></el-input>
+        <el-input type="password" v-model="password" style="width:200px" placeholder="输入密码"></el-input>
       </div>
-      <el-button @click="onSaveConfig" type="primary">保存</el-button>
+      <el-button @click="onRestPassword" type="primary">保存</el-button>
     </el-card>
+
     <el-card class="box-card">
       <template #header>
         <div class="card-header">
@@ -36,14 +33,32 @@
       </div>
     </el-card>
 
-      <el-card class="box-card">
+    <el-card class="box-card">
       <template #header>
         <div class="card-header">
           <span>博主信息</span>
           <el-button class="button" type="text"></el-button>
         </div>
       </template>
-      <div style="">
+      <div>
+        <el-form ref="form" :model="configForm" label-width="180px">
+          <el-form-item label="网名">
+            <el-input v-model="configForm.sysBlogTitle" style="width:200px"></el-input>
+          </el-form-item>
+
+          <el-form-item label="头像">
+            <img class="avatar" @click="selectPicture(configForm.userAvatar)" :src="configForm.userAvatar.src" />
+          </el-form-item>
+          <el-form-item label="主页背景">
+            <img class="index-background-img" @click="selectPicture(configForm.background)" :src="configForm.background.src" />
+          </el-form-item>
+          <el-form-item label="主页欢迎文本(支持HTML)">
+            <textarea v-model="configForm.blogWelcomeText" style="width: 496px;height: 131px;"></textarea>
+          </el-form-item>
+        </el-form>
+        <el-button type="primary" size="small" @click="onConfigInfo()">
+          保存
+        </el-button>
       </div>
     </el-card>
   </div>
@@ -51,14 +66,11 @@
 
 <script>
 import { reactive, toRefs } from "vue";
-import {
-  getSysConfigApi,
-  setSysConfig,
-  addClassifyApi,
-  removeClassifyApi,
-} from "../../apis/admin";
+import { getSysConfigApi, setSysConfig, addClassifyApi, removeClassifyApi, restPassword, configInfo, } from "../../apis/admin";
+import { getConfigInfo } from "../../apis/blog"
 import { listClassifyApi } from "../../apis/blog";
 import { ElMessage, ElMessageBox } from "element-plus";
+const host = import.meta.env.VITE_APP_REQUEST_URL;
 export default {
   setup() {
     const state = reactive({
@@ -66,13 +78,80 @@ export default {
       sysConfigsMap: {},
       configSelectKey: "",
       currentValue: "",
-
+      password: "",
       editableTabsValue: "2",
       editableTabs: [],
       tabIndex: 2,
+      imageUrl: "",
+      configForm: {
+        "sysBlogTitle": "",
+        "userAvatar": {
+          "src": host + "static/av",
+          "blob": null
+        },
+        "background": {
+          "src": host + "static/bck",
+          "blob": null
+        },
+        "imgFile": null,
+        "blogWelcomeText": ""
+      }
     });
+    /**
+     * 发送配置信息
+     */
+    const onConfigInfo = () => {
+      const form = new FormData();
+      form.append('sysBlogTitle', state.configForm.sysBlogTitle);
+      form.append("blogWelcomeText", state.configForm.blogWelcomeText)
+      if (state.configForm.userAvatar.blob != null) {
+        form.append('userAvatar', state.configForm.userAvatar.blob, "userAvatar");
+      }
+      if (state.configForm.background.blob != null) {
+        form.append('background', state.configForm.background.blob, "background");
+      }
+      configInfo(form).then((res) => {
+        ElMessage({
+          message: res.data,
+          type: "success",
+        });
+      })
 
-    const list = () => {
+    }
+    /**
+     * 选择文件
+     */
+
+    const selectPicture = (toTarget) => {
+      let setload = document.createElement("input");
+      setload.type = "file";
+      setload.onchange = e => {
+        let file = e.target.files[0];
+        let reader = new FileReader();
+        toTarget.blob = file;
+        reader.addEventListener('load', () => {
+          toTarget.src = reader.result;
+        });
+        reader.readAsDataURL(file);
+      }
+
+      setload.click();
+
+    }
+    const onRestPassword = () => {
+      restPassword({ "passwd": state.password }).then((res) => {
+        ElMessage({
+          message: res.data,
+          type: "success",
+        });
+      })
+    }
+    const init = () => {
+      getConfigInfo().then((res) => {
+        state.configForm.sysBlogTitle = res.data["sys_blog_title"];
+        state.configForm.blogWelcomeText = res.data["blog_welcome_text"];
+      })
+
       getSysConfigApi().then((res) => {
         let value = res.data.data;
         let map = new Map();
@@ -83,12 +162,11 @@ export default {
         state.sysConfigsMap = map;
       });
       listClassifyApi().then((res) => {
-        state.editableTabs = res.data.data["list"];
+        state.editableTabs = res.data;
       });
     };
     const onConfigKeyChange = (val) => {
       state.currentValue = state.sysConfigsMap.get(val);
-      console.log(state.configSelectKey, val);
     };
     const onSaveConfig = () => {
       state.sysConfigsMap.set(state.configSelectKey, state.currentValue);
@@ -103,7 +181,6 @@ export default {
 
     const addTab = () => {
       openInputDialog();
-
     };
 
     const openInputDialog = () => {
@@ -121,7 +198,7 @@ export default {
             state.editableTabs.push({ classify: value });
           });
         })
-        .catch(() => {});
+        .catch(() => { });
     };
 
     const removeTab = (targetName) => {
@@ -140,16 +217,20 @@ export default {
       );
     };
     return {
-      list,
+      init,
       ...toRefs(state),
+      onConfigInfo,
       onConfigKeyChange,
       onSaveConfig,
       removeTab,
       addTab,
+      onRestPassword,
+      selectPicture
     };
   },
   mounted() {
-    this.list();
+    this.init();
+
   },
 };
 </script>
@@ -160,5 +241,10 @@ export default {
 }
 .el-card {
   margin-bottom: 10px;
+}
+.index-background-img {
+  width: 100px;
+  height: 200px;
+  object-fit: cover;
 }
 </style>
