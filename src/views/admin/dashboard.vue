@@ -32,6 +32,9 @@
     <div class="art-num">
       <div id="echarts" style="width: 900px;height:400px;"></div>
     </div>
+    <div class="art-num">
+      <div id="city-echarts" style="width: 900px;height:400px;"></div>
+    </div>
   </div>
 </template>
 <script>
@@ -46,26 +49,20 @@ export default {
   setup() {
     const state = reactive({
       dashboardMap: {},
-      articleNumMap: {},
     });
     const init = () => {
+      
       dashboardApi().then((res) => {
         state.dashboardMap = res.data.data;
-        state.articleNumMap = res.data.data.article_num;
-        setArticleNum(
-          Object.keys(state.articleNumMap),
-          Object.values(state.articleNumMap)
-        );
+        setEchartsBarData("echarts", "文章数量", "#03a9f4", Object.keys(res.data.data.article_num), Object.values(res.data.data.article_num));
+        setEchartsBarData("city-echarts", "城市top", "#70cda1", Object.keys(res.data.data.city_top), Object.values(res.data.data.city_top))
       })
     };
-    const setArticleNum = (key, value) => {
-      console.log(Array.from(key).length)
-      console.log(key);
-
-      var myChart = echarts.init(document.getElementById("echarts"));
+    const setEchartsBarData = (domName, title, color, key, value) => {
+      var myChart = echarts.init(document.getElementById(domName));
       let option = {
-        title:{
-          text:"文章数量"
+        title: {
+          text: title
         },
         tooltip: {
           trigger: "axis",
@@ -73,6 +70,7 @@ export default {
             type: "shadow",
           },
         },
+        color: color,
         grid: {
           left: "3%",
           right: "4%",
@@ -82,7 +80,7 @@ export default {
         xAxis: [
           {
             type: "category",
-            data:key,
+            data: key,
             axisTick: {
               alignWithLabel: true,
             },
@@ -95,17 +93,18 @@ export default {
         ],
         series: [
           {
-            title:"a",
+            title: "a",
             name: "值",
             type: "bar",
             barWidth: "60%",
             data: value,
-            label:"a"
+            label: ""
           },
         ],
       };
       myChart.setOption(option);
-    };
+    }
+
     return { ...toRefs(state), init };
   },
   mounted() {

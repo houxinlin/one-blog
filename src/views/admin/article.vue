@@ -50,7 +50,6 @@ export default {
       });
     };
     const handleSizeChange = (val) => {
-      console.log(`${val} items per page`);
     };
     const handleCurrentChange = (val) => {
       listBlog("", val);

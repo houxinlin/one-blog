@@ -70,7 +70,6 @@ const router = createRouter({
 });
 router.beforeEach((to, from, next) => {
   if (to.meta.login) {
-    console.log(to)
     if (sessionStorage.getItem("login")) {
       next();
     } else {

@@ -25,11 +25,8 @@
 		"vuex": "^4.0.0-0"
 	},
 	"devDependencies": {
+		"@vitejs/plugin-legacy": "^1.4.4",
 		"@vitejs/plugin-vue": "^1.9.3",
-		"crypto-js": "^4.1.1",
-		"less": "^3.0.4",
-		"less-loader": "^5.0.0",
-		"vite": "^2.6.4",
 		"@vue/cli-plugin-babel": "~4.5.0",
 		"@vue/cli-plugin-eslint": "~4.5.0",
 		"@vue/cli-plugin-router": "~4.5.0",
@@ -39,11 +36,15 @@
 		"babel-eslint": "^10.1.0",
 		"compression-webpack-plugin": "^5.0.1",
 		"cross-env": "^7.0.3",
+		"crypto-js": "^4.1.1",
 		"eslint": "^6.7.2",
 		"eslint-friendly-formatter": "^4.0.1",
 		"eslint-loader": "^4.0.2",
 		"eslint-plugin-vue": "^7.20.0",
-		"@vitejs/plugin-legacy": "^1.4.4"
+		"less": "^3.0.4",
+		"less-loader": "^5.0.0",
+		"vite": "^2.6.4",
+		"vite-plugin-compression": "^0.5.1"
 	},
 	"eslintConfig": {
 		"root": true,

@@ -59,7 +59,6 @@ export default {
   mounted() {
     this.cacheBlog = JSON.parse(localStorage.getItem("cacheblog")) || {};
     this.cacheRandomKey = this.randomKey();
-    console.log(this.autoSaveIntervalId);
 
     this.autoSaveIntervalId = setInterval(() => { this.autoSave(); }, 1000);
     let id = router.currentRoute.value.query.id;

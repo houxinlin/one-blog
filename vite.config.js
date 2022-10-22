@@ -2,6 +2,11 @@
 import legacyPlugin from '@vitejs/plugin-legacy';
 import * as path from 'path';
 import vuePlugin from '@vitejs/plugin-vue';
+
+import viteCompression from 'vite-plugin-compression';
+
+
+
 // @see https://cn.vitejs.dev/config/
 export default ({
   command,
@@ -46,6 +51,7 @@ export default ({
     esbuild,
     optimizeDeps,
     plugins: [
+      viteCompression(),
       legacyPlugin({
         targets: ['Android > 39', 'Chrome >= 60', 'Safari >= 10.1', 'iOS >= 10.3', 'Firefox >= 54', 'Edge >= 15'],
       }), vuePlugin(),

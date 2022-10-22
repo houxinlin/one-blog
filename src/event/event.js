@@ -20,7 +20,6 @@ class Event {
   }
 
   trigger(eventName, data) {
-    console.log(this.events[eventName]);
     if (this.events[eventName]) {
       this.events[eventName].forEach(function(fn) {
         fn(data);

@@ -113,7 +113,6 @@ export default {
     };
     const goToPage = (page, i) => {
       page = i == 1 ? page + 1 : page;
-      console.log(page);
       state.stateMap.clear();
       for (let i = 0; i < page; i++) {
         state.stateMap.set(i, true);
@@ -131,7 +130,6 @@ export default {
       state.stateMap.set(0, true);
       setTimeout(() => {
         for (let i = state.bookeSize - 1; i > 0; i--) {
-          console.log(i);
           state.zIndex[i] = state.bookeSize - i;
         }
         state.zIndex[0] = 1;
