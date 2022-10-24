@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { onMounted, onUnmounted, reactive, toRefs } from "vue";
+import { onUnmounted, reactive, toRefs } from "vue";
 import "prismjs/themes/prism.css";
 import "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css";
 import Editor from "@toast-ui/editor";
@@ -47,48 +47,15 @@ import "../../assets/css/toastui-editor-plugin-code-syntax-highlight.css";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { ElLoading } from "element-plus";
 import { ElMessage } from "element-plus";
-import {
-  addBlogApi,
-  listClassifyApi,
-  getMarkdownContentApi,
-} from "../../apis/blog";
+import { listClassifyApi, getMarkdownContentApi, } from "../../apis/blog";
+import { addBlogApi, pushImage } from "../../apis/admin";
+
 import router from "../../router/index";
 
 export default {
-
   mounted() {
-    this.cacheBlog = JSON.parse(localStorage.getItem("cacheblog")) || {};
-    this.cacheRandomKey = this.randomKey();
-
-    this.autoSaveIntervalId = setInterval(() => { this.autoSave(); }, 1000);
-    let id = router.currentRoute.value.query.id;
-    listClassifyApi().then((res) => {
-      this.typeList = res.data.data;
-    });
-    //如果存在id，则表示编辑，先获取对应id下的内容
-    if (id) {
-      getMarkdownContentApi({ id }).then((res) => {
-        let blog = res.data.data;
-        this.title = blog.blogTitle;
-        this.type = blog.classifyId;
-        this.desc = blog.blogDescribe;
-        this.editor = new Editor({
-          el: document.querySelector("#markdown"),
-          height: "500px",
-          previewStyle: "vertical",
-          initialValue: blog.markdownContent,
-        });
-      });
-      return;
-    }
-    this.editor = new Editor({
-      el: document.querySelector("#markdown"),
-      height: "500px",
-      previewStyle: "vertical",
-      initialValue: "## ",
-    });
+    this.init();
   },
-
   setup() {
 
     const state = reactive({
@@ -132,12 +99,7 @@ export default {
     const loadCacheToEdit = (i, item) => {
       state.title = item.title;
       state.cacheRandomKey = item.key;
-      state.editor = new Editor({
-        el: document.querySelector("#markdown"),
-        height: "500px",
-        previewStyle: "vertical",
-        initialValue: item.content,
-      });
+      createMarkdown(item.content)
       state.cacheDialogTableVisible = false;
     };
 
@@ -164,13 +126,11 @@ export default {
       delete cache[item.key];
       state.cacheBlog.length = 0;
       localStorage.setItem("cacheblog", JSON.stringify(cache));
-      // loadCacheBlog(showCacheDialog);
+      loadCacheBlog(showCacheDialog);
       ElMessage({ message: "删除成功", type: "success", duration: 1000, });
       state.autoSaveFlag = true;
     };
-    onUnmounted(() => {
-      clearInterval(state.autoSaveIntervalId);
-    })
+
     const onSubmit = () => {
       let body = {
         id: router.currentRoute.value.query.id,
@@ -199,8 +159,53 @@ export default {
         ElMessage({ message: "发布成功", type: "success", duration: 1000, });
       });
     };
+    const imageHook = (fileOrBlob, callback) => {
+      let formData = new FormData();
+      formData.append("img", fileOrBlob, "img");
+      pushImage(formData).then((response) => {
+        let url = `${import.meta.env.VITE_APP_REQUEST_URL}static/${response.data}`;
+        callback(url, "img")
+      })
+    }
+    const createMarkdown = (initialValue = "## ") => {
+      state.editor = new Editor({
+        el: document.querySelector("#markdown"),
+        height: "500px",
+        previewStyle: "vertical",
+        initialValue: initialValue,
+        hooks: {
+          addImageBlobHook: imageHook
+        },
+      });
+    }
+    onUnmounted(() => {
+      clearInterval(state.autoSaveIntervalId);
+    })
+    const init = () => {
+      state.cacheBlog = JSON.parse(localStorage.getItem("cacheblog")) || {};
+      state.cacheRandomKey = randomKey();
+
+      state.autoSaveIntervalId = setInterval(() => { autoSave(); }, 1000);
+      let id = router.currentRoute.value.query.id;
+      listClassifyApi().then((res) => {
+        state.typeList = res.data.data;
+      });
+      //如果存在id，则表示编辑，先获取对应id下的内容
+      if (id) {
+        getMarkdownContentApi({ id }).then((res) => {
+          let blog = res.data.data;
+          state.title = blog.blogTitle;
+          state.type = blog.classifyId;
+          state.desc = blog.blogDescribe;
+          createMarkdown(blog.markdownContent);
+        });
+        return;
+      }
+      createMarkdown();
+    }
     return {
       ...toRefs(state),
+      init,
       deleteCacheBlog,
       loadCacheBlog,
       loadCacheToEdit,

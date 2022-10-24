@@ -162,7 +162,7 @@ export default {
         state.sysConfigsMap = map;
       });
       listClassifyApi().then((res) => {
-        state.editableTabs = res.data;
+        state.editableTabs = res.data.data;
       });
     };
     const onConfigKeyChange = (val) => {

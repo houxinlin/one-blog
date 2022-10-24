@@ -72,4 +72,18 @@ export function configInfo(data) {
     data
   })
 }
+export function addBlogApi(data) {
+  return axios({
+    url: '/api/admin/add',
+    method: 'post',
+    data: data
+  })
+}
 
+export function pushImage(img) {
+  return axios({
+    url: '/api/admin/img',
+    method: 'put',
+    data: img
+  })
+}

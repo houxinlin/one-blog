@@ -33,13 +33,7 @@ export function listClassifyApi() {
   })
 }
 
-export function addBlogApi(data) {
-  return axios({
-    url: '/api/admin/add',
-    method: 'post',
-    data: data
-  })
-}
+
 
 export function autoCompletionApi(text) {
   return axios({

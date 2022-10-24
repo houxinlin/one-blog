@@ -286,7 +286,7 @@ const init = () => {
   bus.on("onConfig", (data) => { state.blogTitle = data["sys_blog_title"]; });
   listClassifyApi()
     .then((res) => {
-      state.classify = res.data;
+      state.classify = res.data.data;
       state.currentClassify = state.classify[0].classify;
       return getListApi({ page: 1, type: state.classify[0].classify });
     })
@@ -621,9 +621,9 @@ const listBlogIndex = () => {
     .title {
       display: inline-block;
       margin-top: 20px;
-      font-family: "Windsong";
-      font-size: 2.8rem;
+      font-size: 24px;
       color: #ffffff;
+      margin-bottom: 20px;
     }
   }
 }
