@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container line-numbers">
     <div class="index-body" :style="{ transform: 'translateX(' + (state.hideIndexPage ? state.clientWidth : 0) + 'px)'}">
       <nav>
         <li @click="entryBlogPage()">Blog</li>

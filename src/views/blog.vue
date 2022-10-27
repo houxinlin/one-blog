@@ -95,18 +95,20 @@
 </template>
 
 <script setup>
-import "prismjs/themes/prism.css";
-import "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css";
-import Prism from "prismjs";
-import codeSyntaxHighlight from "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js";
-import "../assets/css/toastui-editor-plugin-code-syntax-highlight.css";
-import { reactive, toRefs, onMounted } from "vue";
+import { reactive, onMounted } from "vue";
+
+// import "prismjs/themes/prism.css";
+import "../assets/css/prism-line-numbers.css"
 import "../assets/font.css";
 import "../assets/font/font-icon/iconfont.css";
+// import "@toast-ui/editor/dist/toastui-editor.css";
+import "../assets/css/toastui-editor-plugin-code-syntax-highlight.css";
+
 import diary from "./book.vue";
-import "@toast-ui/editor/dist/toastui-editor.css";
 import Viewer from "@toast-ui/editor/dist/toastui-editor-viewer";
+import codeSyntaxHighlight from "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js";
 import bus from "../event/event";
+import  "../assets/js/line-number.js"
 import {
   getListApi,
   getMarkdownContentApi,
@@ -232,7 +234,10 @@ const getBlogContent = (id) => {
       height: "500px",
       plugins: [[codeSyntaxHighlight, { highlighter: Prism }]],
       initialValue: value,
+
     });
+       Prism.highlightAll();
+    // startLineNumber()
     state.showTitle = true;
     state.hideNavBar = true;
     state.hideAarticleList = true;
@@ -436,7 +441,6 @@ const listBlogIndex = () => {
       }
       .article-viewer {
         transform: scale(0);
-        background: #ffffff;
         .scale-view;
       }
       .article-list {

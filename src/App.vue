@@ -25,26 +25,14 @@ ul {
 }
 
 ::-webkit-scrollbar {
-    width: 10px;
-  }
-
-::-webkit-scrollbar-track {
-    background: #6d1d1d00;
-    border-radius: 10px;
+  width: 7px;
+  height: 7px;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #000000;
-    border-radius: 10px;
-  }
-
-::-webkit-scrollbar-thumb:hover {
-    background: rgb(100, 100, 100);
-    border-radius: 10px;
-  }
-
-::-webkit-scrollbar-thumb:active {
-    background: rgb(68, 68, 68);
-    border-radius: 10px;
-  }
+  background: #000;
+  border-radius: 14px;
+}
+::-webkit-scrollbar-track {
+  background: #0000;
+}
 </style>

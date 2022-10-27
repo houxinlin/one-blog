@@ -1,6 +1,6 @@
 <template>
   <el-button @click="loadCacheBlog(true)" style="margin-bottom:10px" size="mini">加载草稿</el-button>
-  <div id="markdown"></div>
+  <div class="line-numbers" id="markdown"></div>
   <el-form ref="form">
     <el-form-item label="标题">
       <el-input v-model="title"></el-input>
@@ -44,12 +44,16 @@ import "prismjs/themes/prism.css";
 import "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css";
 import Editor from "@toast-ui/editor";
 import "../../assets/css/toastui-editor-plugin-code-syntax-highlight.css";
+
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { ElLoading } from "element-plus";
 import { ElMessage } from "element-plus";
 import { listClassifyApi, getMarkdownContentApi, } from "../../apis/blog";
 import { addBlogApi, pushImage } from "../../apis/admin";
 
+import codeSyntaxHighlight from "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js";
+import "../../assets/css/toastui-editor-plugin-code-syntax-highlight.css";
+import "prismjs/plugins/line-highlight/prism-line-highlight.js"
 import router from "../../router/index";
 
 export default {
@@ -173,6 +177,7 @@ export default {
         height: "500px",
         previewStyle: "vertical",
         initialValue: initialValue,
+        plugins: [[codeSyntaxHighlight]],
         hooks: {
           addImageBlobHook: imageHook
         },

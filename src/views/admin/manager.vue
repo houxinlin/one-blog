@@ -1,10 +1,9 @@
 <template>
   <div>
-
     <el-aside>
       <v-sidebar />
     </el-aside>
-    <el-main>
+    <el-main class="line-numbers">
       <router-view>
 
       </router-view>

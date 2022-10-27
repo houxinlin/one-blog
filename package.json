@@ -17,11 +17,12 @@
 		"echarts": "^5.2.1",
 		"element-plus": "^1.1.0-beta.24",
 		"element-ui": "^2.15.6",
+		"markdown-it": "^13.0.1",
 		"mitt": "^3.0.0",
-		"prismjs": "^1.25.0",
 		"vue": "^3.2.16",
 		"vue-router": "^4.0.0-0",
 		"vue-state-store": "^3.0.3",
+		"vue3-markdown-it": "^1.0.10",
 		"vuex": "^4.0.0-0"
 	},
 	"devDependencies": {
