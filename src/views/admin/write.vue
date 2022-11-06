@@ -46,8 +46,7 @@ import Editor from "@toast-ui/editor";
 import "../../assets/css/toastui-editor-plugin-code-syntax-highlight.css";
 
 import "@toast-ui/editor/dist/toastui-editor.css";
-import { ElLoading } from "element-plus";
-import { ElMessage } from "element-plus";
+import { ElLoading,ElMessage,ElInput,ElDialog ,ElForm,ElOption,ElSelect,ElTableColumn,ElTable,ElButton,ElFormItem} from "element-plus";
 import { listClassifyApi, getMarkdownContentApi, } from "../../apis/blog";
 import { addBlogApi, pushImage } from "../../apis/admin";
 
@@ -57,6 +56,9 @@ import "prismjs/plugins/line-highlight/prism-line-highlight.js"
 import router from "../../router/index";
 
 export default {
+  components: {
+     ElInput,ElDialog,ElOption,ElSelect,ElTableColumn,ElTable,ElButton,ElFormItem,ElForm
+  },
   mounted() {
     this.init();
   },

@@ -12,7 +12,7 @@ pre.line-numbers>code {
 .line-numbers .line-numbers-rows {
 	position: absolute;
 	pointer-events: none;
-	top: 0;
+	top: -5px;
 	font-size: 100%;
 	left: -50px;
 	width: 3em;

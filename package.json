@@ -17,6 +17,7 @@
 		"echarts": "^5.2.1",
 		"element-plus": "^1.1.0-beta.24",
 		"element-ui": "^2.15.6",
+		"gatsby-remark-default-code-lang": "^0.0.2",
 		"markdown-it": "^13.0.1",
 		"mitt": "^3.0.0",
 		"vue": "^3.2.16",

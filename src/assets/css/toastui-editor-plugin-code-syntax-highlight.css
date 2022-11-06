@@ -2,14 +2,15 @@
   width: 100% !important;
   border-radius: 4px !important;
   background-color: #333 !important;
-  box-sizing: border-box !important
+  box-sizing: border-box !important;
+  padding-left: 40px;
 }
 
 .toastui-editor-contents code {
   color: #ffffff !important;
   background-color: #db6262 !important;
-  line-height: 24px !important;
-  font-size: 12px !important
+  line-height: 200% !important;
+  font-size: 12px !important;
 }
 
 .toastui-editor-contents p {
@@ -21,7 +22,8 @@
 
 .toastui-editor-contents h1 {
   border-bottom: 1px #eaecef solid !important;
-  font-size: 17px !important
+  font-size: 17px !important;
+  margin-top: 25px;
 }
 
 .toastui-editor-contents h2 {
@@ -616,10 +618,10 @@ html {
 }
 
 body {
-  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", 微软雅黑, Arial, sans-serif;
+  font-family:  "WenQuanYi Micro Hei", "-apple-system,system-ui","Segoe UI,Roboto","Ubuntu","Cantarell","Noto Sans","sans-serif","BlinkMacSystemFont","Helvetica Neue","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Arial" !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-size: 16px;
+  font-size: 13px;
   color: #2c3e50;
 }
 
@@ -7818,4 +7820,7 @@ pre[class*="language-"] ::selection,
 code[class*="language-"]::selection,
 code[class*="language-"] ::selection {
   background: #336d61a6 !important;
+}
+
+.toastui-editor-contents *:not(table){
 }

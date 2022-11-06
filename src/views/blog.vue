@@ -64,7 +64,7 @@
             <div id="md"></div>
           </div>
           <!-- 文章预览 end -->
-          <el-main class="el-main" v-loading="state.loading">
+          <div class="el-main" >
             <!-- 文章列表 -->
             <div :class="{ 'hide-article-list': state.hideAarticleList }" class="article-list">
               <div v-for="item in state.blogs" :key="item" @click="articleDetail(item.id)" class="article-item">
@@ -86,7 +86,7 @@
                 {{ index }}
               </button>
             </div>
-          </el-main>
+          </div>
 
         </div>
       </div>
@@ -99,7 +99,6 @@ import { reactive, onMounted } from "vue";
 
 // import "prismjs/themes/prism.css";
 import "../assets/css/prism-line-numbers.css"
-import "../assets/font.css";
 import "../assets/font/font-icon/iconfont.css";
 // import "@toast-ui/editor/dist/toastui-editor.css";
 import "../assets/css/toastui-editor-plugin-code-syntax-highlight.css";
