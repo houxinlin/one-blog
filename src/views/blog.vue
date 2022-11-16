@@ -1,14 +1,14 @@
 <template>
   <div class="body">
     <!-- 左侧aside -->
-    <aside :style="{'background-image': 'url('+host+'static/bck'}" @click="toIndexPage()">
+    <aside :style="{ 'background-image': 'url(' + host + 'static/bck' }" @click="toIndexPage()">
       <div class="background">
         <div class="masker"></div>
       </div>
       <!-- 头像和网名 -->
-      <img class="avatar" :src="host+'static/av'" alt="" />
+      <img class="avatar" :src="host + 'static/av'" alt="" />
       <div>
-        <span class="title">{{state.blogTitle}}</span>
+        <span class="title">{{ state.blogTitle }}</span>
       </div>
       <div class="menu-list">
         <!-- 单击首页 -->
@@ -23,16 +23,18 @@
       </div>
       <div class="site">
         <a target="_blank" href="https://github.com/houxinlin"> <img src="../assets/imgs/github.svg" alt="" /> </a>
-        <a target="_blank" href="https://juejin.cn/user/588993963758215/posts"> <img src="../assets/imgs/juejin.svg" alt="" /></a>
+        <a target="_blank" href="https://juejin.cn/user/588993963758215/posts"> <img src="../assets/imgs/juejin.svg"
+            alt="" /></a>
       </div>
     </aside>
     <!-- 左侧aside end -->
     <section>
-      <div class="diary-layout layout-item" :style="{'transform':state.dirayTransformValue,'background-image': 'url('+host+'static/bck'}">
+      <div class="diary-layout layout-item"
+        :style="{ 'transform': state.dirayTransformValue, 'background-image': 'url(' + host + 'static/bck' }">
         <div class="mask"></div>
         <diary ref="refDiary"></diary>
       </div>
-      <div :style="{'transform':'translateY('+state.blogLayoutY+')'}" class="blog-layout layout-item">
+      <div :style="{ 'transform': 'translateY(' + state.blogLayoutY + ')' }" class="blog-layout layout-item">
         <!-- 自动补全结果 -->
         <!-- <div v-if="componentsList.length>0" class="search-result">
           <template v-for="item in componentsList" :key="item">
@@ -42,7 +44,8 @@
         <nav>
           <!-- 文章分类导航 -->
           <div class="list" :style="{ transform: state.hideNavBar ? 'translateY(-55px)' : 'none', }">
-            <li @click="listBlogByType(1, item.classify,index)" v-for="(item ,index) in state.classify" :key="item" :class="{'select':state.currentNavIndex==index}">
+            <li @click="listBlogByType(1, item.classify, index)" v-for="(item, index) in state.classify" :key="item"
+              :class="{ 'select': state.currentNavIndex == index }">
               {{ item.classify }}
             </li>
           </div>
@@ -52,7 +55,8 @@
 
           </div> -->
           <!-- 文章标题 -->
-          <div :style="{ transform: state.showTitle ? 'translateY(0)' : 'translateY(50px)',}" @click="hideArticleList" class="bottom-title" style="display:flex; align-items: center;">
+          <div :style="{ transform: state.showTitle ? 'translateY(0)' : 'translateY(50px)', }" @click="hideArticleList"
+            class="bottom-title" style="display:flex; align-items: center;">
             <h2 class="article-title"> {{ state.currentBlogTitle }} </h2>
             <span v-if="state.hideAarticleList" class="iconfont icon-fanhui"></span>
           </div>
@@ -64,7 +68,7 @@
             <div id="md"></div>
           </div>
           <!-- 文章预览 end -->
-          <div class="el-main" >
+          <div class="el-main">
             <!-- 文章列表 -->
             <div :class="{ 'hide-article-list': state.hideAarticleList }" class="article-list">
               <div v-for="item in state.blogs" :key="item" @click="articleDetail(item.id)" class="article-item">
@@ -82,7 +86,9 @@
                 </footer>
               </div>
               <!-- 分页 -->
-              <button :class="{ select: state.currentPage == index }" @click="listByType(index, state.currentClassify,state.currentNavIndex)" class="page-button" v-for="index in state.pageSize" :key="index">
+              <button :class="{ select: state.currentPage == index }"
+                @click="listByType(index, state.currentClassify, state.currentNavIndex)" class="page-button"
+                v-for="index in state.pageSize" :key="index">
                 {{ index }}
               </button>
             </div>
@@ -107,7 +113,7 @@ import diary from "./book.vue";
 import Viewer from "@toast-ui/editor/dist/toastui-editor-viewer";
 import codeSyntaxHighlight from "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js";
 import bus from "../event/event";
-import  "../assets/js/line-number.js"
+import "../assets/js/line-number.js"
 import {
   getListApi,
   getMarkdownContentApi,
@@ -144,16 +150,20 @@ const state = reactive({
   dirayVisable: false,
   dirayTransformValue: "0px"
 });
-onMounted(() => {
-  init();
+const pageInit = () => {
   state.clientWidth = `${document.documentElement.clientWidth}`;
   state.clientHeight = `${document.documentElement.clientWidth}`;
-  window.onresize = function () {
-    state.clientWidth = `${document.documentElement.clientWidth}`;
-    state.clientHeight = `${document.documentElement.clientWidth}`;
-  };
+
+  if (state.dirayVisable) return
   state.dirayLayoutY = -state.clientHeight + "px";
   state.dirayTransformValue = `translateX(${state.dirayLayoutY})`;
+}
+onMounted(() => {
+  init();
+
+  window.addEventListener("resize", pageInit);
+
+  pageInit();
 })
 /**
  * 转到首页
@@ -235,7 +245,7 @@ const getBlogContent = (id) => {
       initialValue: value,
 
     });
-       Prism.highlightAll();
+    Prism.highlightAll();
     // startLineNumber()
     state.showTitle = true;
     state.hideNavBar = true;
@@ -349,6 +359,7 @@ const listBlogIndex = () => {
 .show-blog-viewer {
   transform: scale(1) !important;
 }
+
 #md {
   width: 57%;
 }
@@ -374,10 +385,12 @@ const listBlogIndex = () => {
     right: 0px;
     bottom: 0px;
     left: 300px;
+
     .blog-layout {
       display: flex;
       flex-direction: column;
       margin: 20px;
+
       .search-result {
         position: absolute;
         right: 4px;
@@ -390,16 +403,19 @@ const listBlogIndex = () => {
         border-radius: 0px;
         min-width: 300px;
         padding: 4px;
+
         div {
           cursor: pointer;
           margin: 6px 0px;
           padding: 5px 3px;
         }
+
         div:hover {
           background: #fafafa;
         }
       }
     }
+
     .diary-layout {
       display: flex;
       justify-content: center;
@@ -408,11 +424,13 @@ const listBlogIndex = () => {
       background-attachment: scroll;
       background-size: auto;
       background-position-x: -300px;
+
       img {
         width: 100%;
         height: 100%;
         position: absolute;
       }
+
       .mask {
         background: #000000b5;
         position: absolute;
@@ -422,6 +440,7 @@ const listBlogIndex = () => {
         bottom: 0px;
       }
     }
+
     .layout-item {
       transition: all 0.5s;
       position: absolute;
@@ -430,20 +449,25 @@ const listBlogIndex = () => {
       top: 0px;
       right: 0px;
     }
+
     .container {
       position: relative;
       margin-top: 61px;
       flex: 1;
+
       .el-main {
         // height: 100%;
         padding: 0px;
       }
+
       .article-viewer {
         transform: scale(0);
         .scale-view;
       }
+
       .article-list {
         .scale-view;
+
         button.select {
           background: #424242;
           color: #ffffff;
@@ -463,6 +487,7 @@ const listBlogIndex = () => {
           cursor: pointer;
           margin-bottom: 20px;
           border-bottom: 1px #f7f7f7 solid;
+
           .title {
             font-size: 15px;
             font-weight: 700;
@@ -470,6 +495,7 @@ const listBlogIndex = () => {
             line-height: 24px;
             color: #323030;
           }
+
           .outline {
             margin-top: 2px;
             font-size: 13px;
@@ -477,11 +503,13 @@ const listBlogIndex = () => {
             width: 70%;
             padding: 5px 0px;
           }
+
           footer {
             text-align: justify;
             align-items: center;
             height: 33px;
             display: flex;
+
             span.text {
               font-size: 10px;
               margin-left: 3px;
@@ -491,6 +519,7 @@ const listBlogIndex = () => {
         }
       }
     }
+
     nav {
       padding-bottom: 10px;
       border-bottom: 1px #dadada solid;
@@ -506,6 +535,7 @@ const listBlogIndex = () => {
       .search {
         position: absolute;
         right: 0px;
+
         input {
           border: 1px #dadada solid;
           border-radius: 100px;
@@ -514,38 +544,46 @@ const listBlogIndex = () => {
           outline: none;
           transition: all 0.5s;
         }
+
         input:focus {
           width: 300px;
         }
       }
+
       .bottom-title {
         transition: all 0.5s;
         transform: translateY(50px);
       }
+
       .article-title {
         margin-right: 10px;
         color: #383838;
         font-size: 14px;
         margin-top: 13px;
       }
+
       .list {
         position: absolute;
         transition: all 0.5s;
         display: flex;
         align-items: center;
         height: 100%;
+
         li:nth-of-type(1) {
           margin-left: 0px;
         }
+
         li:nth-last-of-type(1) {
           margin-right: 0px;
         }
+
         li {
           margin: 0 20px;
           cursor: pointer;
           display: flex;
           align-items: center;
         }
+
         li.select {
           border-bottom: 2px #000000 solid;
           height: 100%;
@@ -553,6 +591,7 @@ const listBlogIndex = () => {
       }
     }
   }
+
   aside {
     text-align: center;
     padding-top: 60px;
@@ -570,11 +609,13 @@ const listBlogIndex = () => {
 
     .menu-list {
       color: #ffffff;
+
       .menu-item {
         margin: 20px 0px;
         cursor: pointer;
       }
     }
+
     .background {
       width: 100%;
       height: 100%;
@@ -582,6 +623,7 @@ const listBlogIndex = () => {
       left: 0px;
       top: 0px;
       z-index: -1;
+
       img {
         object-fit: cover;
         width: 100%;
@@ -590,6 +632,7 @@ const listBlogIndex = () => {
         top: 0px;
         position: absolute;
       }
+
       div {
         height: 100%;
         width: 100%;
@@ -599,6 +642,7 @@ const listBlogIndex = () => {
         top: 0px;
       }
     }
+
     .bck::before {
       content: "2";
       position: relative;
@@ -607,11 +651,13 @@ const listBlogIndex = () => {
       height: 100%;
       background: #ff0000;
     }
+
     .site {
       margin-top: 20px;
       position: absolute;
       bottom: 10px;
       width: 100%;
+
       img {
         width: 23px;
         margin: 0px 20px;
@@ -621,6 +667,7 @@ const listBlogIndex = () => {
         // background: #ffffff;
       }
     }
+
     .title {
       display: inline-block;
       margin-top: 20px;
