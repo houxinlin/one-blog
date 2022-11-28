@@ -582,11 +582,16 @@ const listBlogIndex = () => {
           cursor: pointer;
           display: flex;
           align-items: center;
+          position: relative;
         }
 
-        li.select {
+        li.select::after {
+          content: '';
           border-bottom: 2px #000000 solid;
-          height: 100%;
+          position: absolute;
+          left: 0px;
+          right: 0px;
+          top: 30px;
         }
       }
     }
