@@ -65,7 +65,7 @@ onMounted(() => {
 /**
  * 进入软件页面
  */
-const entrySortware = () => {
+const entrySoftware = () => {
 
 }
 
