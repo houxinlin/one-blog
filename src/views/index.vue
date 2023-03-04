@@ -1,16 +1,19 @@
 <template>
   <div class="container line-numbers">
-    <div class="index-body" :style="{ transform: 'translateX(' + (state.hideIndexPage ? state.clientWidth : 0) + 'px)'}">
+    <div class="index-body" :style="{ transform: 'translateX(' + (state.hideIndexPage ? state.clientWidth : 0) + 'px)' }">
       <nav>
         <li @click="entryBlogPage()">Blog</li>
+        <li @click="entrySortware()">软件</li>
       </nav>
       <img class="blob1" src="../assets/imgs/blob1.svg" alt="" />
       <img class="blob2" src="../assets/imgs/blob2.svg" alt="" />
       <div v-html="state.welcomeText" class="name">
       </div>
     </div>
-    <div class="blog-body" :style="{ transform: 'translateX(' + (state.hideIndexPage ? 0 : -state.clientWidth) + 'px)',  
-                                    display: state.hideBlogPage ? 'none' : 'block',}">
+    <div class="blog-body" :style="{
+      transform: 'translateX(' + (state.hideIndexPage ? 0 : -state.clientWidth) + 'px)',
+      display: state.hideBlogPage ? 'none' : 'block',
+    }">
       <blogPage />
     </div>
 
@@ -59,6 +62,12 @@ onMounted(() => {
     }
   })
 })
+/**
+ * 进入软件页面
+ */
+const entrySortware = () => {
+
+}
 
 /**
  * 进入首页界面
@@ -88,22 +97,28 @@ const entryBlogPage = () => {
   transition: all 0.5s;
   background: #ffffff00;
 }
+
 .hide-diary-page {
   transform: translateY(-800px);
 }
+
 @keyframes wave-animation {
   0% {
     transform: rotate(0deg);
   }
+
   20% {
     transform: rotate(14deg);
   }
+
   40% {
     transform: rotate(-8deg);
   }
+
   70% {
     transform: rotate(14deg);
   }
+
   100% {
     transform: rotate(0deg);
   }
@@ -113,10 +128,12 @@ const entryBlogPage = () => {
   from {
     transform: scale(0);
   }
+
   to {
     transform: scale(1);
   }
 }
+
 .fixed-full {
   position: fixed;
   bottom: 0px;
@@ -124,9 +141,11 @@ const entryBlogPage = () => {
   left: 0px;
   right: 0px;
 }
+
 .container {
   overflow: hidden;
   .fixed-full;
+
   .blog-body {
     transform: translateX(-9000px);
     position: fixed;
@@ -138,14 +157,17 @@ const entryBlogPage = () => {
     overflow: hidden;
     //  display: none;
   }
+
   .index-body {
     height: 100%;
     transition: all 0.5s;
+
     nav {
       display: flex;
       justify-content: center;
       height: 132px;
       align-items: center;
+
       li {
         cursor: pointer;
         margin: 0px 50px;
@@ -156,6 +178,7 @@ const entryBlogPage = () => {
         z-index: 99999;
       }
     }
+
     .blob1 {
       transition: all 0.5s;
       position: fixed;
@@ -166,6 +189,7 @@ const entryBlogPage = () => {
       animation-duration: 0.5s;
       transform-origin: right top;
     }
+
     .blob2 {
       position: fixed;
       bottom: 0px;
@@ -175,10 +199,12 @@ const entryBlogPage = () => {
       animation-duration: 0.5s;
       transform-origin: left bottom;
     }
+
     .name span:nth-of-type(3) {
       position: relative;
       left: 100px;
     }
+
     .name {
       position: fixed;
       font-size: 30px;
@@ -195,6 +221,7 @@ const entryBlogPage = () => {
       align-items: center;
       flex-direction: column;
     }
+
     .name span:nth-of-type(2) {
       transition: all 0.5s;
       animation-name: wave-animation;
@@ -203,6 +230,7 @@ const entryBlogPage = () => {
     }
   }
 }
+
 .add {
   transition: all 0.5s;
 }
