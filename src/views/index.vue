@@ -3,7 +3,7 @@
     <div class="index-body" :style="{ transform: 'translateX(' + (state.hideIndexPage ? state.clientWidth : 0) + 'px)' }">
       <nav>
         <li @click="entryBlogPage()">Blog</li>
-        <!-- <li @click="entrySoftware()">软件</li> -->
+        <li @click="entrySoftware()">软件</li>
       </nav>
       <img class="blob1" src="../assets/imgs/blob1.svg" alt="" />
       <img class="blob2" src="../assets/imgs/blob2.svg" alt="" />
@@ -67,11 +67,11 @@ onMounted(() => {
 /**
  * 进入软件页面
  */
-// const entrySoftware = () => {
-//   console.log(router);
-//   router.push("/software")
-//   // window.
-// }
+const entrySoftware = () => {
+  console.log(router);
+  router.push("/software")
+  // window.
+}
 
 /**
  * 进入首页界面
