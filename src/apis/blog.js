@@ -39,20 +39,26 @@ export function autoCompletionApi(text) {
   return axios({
     url: '/api/blog/autoCompletion',
     method: 'get',
-    params: {text}
+    params: { text }
   })
 }
-export function searchApi(q,from) {
+export function searchApi(q, from) {
   return axios({
     url: '/api/blog/search',
     method: 'get',
-    params: {q,from}
+    params: { q, from }
   })
 }
 
 export function getConfigInfo() {
   return axios({
     url: '/api/blog/getConfigs',
+    method: 'get'
+  })
+}
+export function listSoftware() {
+  return axios({
+    url: '/api/blog/listSoftware',
     method: 'get'
   })
 }

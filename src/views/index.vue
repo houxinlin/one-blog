@@ -3,7 +3,7 @@
     <div class="index-body" :style="{ transform: 'translateX(' + (state.hideIndexPage ? state.clientWidth : 0) + 'px)' }">
       <nav>
         <li @click="entryBlogPage()">Blog</li>
-        <li @click="entrySortware()">软件</li>
+        <!-- <li @click="entrySoftware()">软件</li> -->
       </nav>
       <img class="blob1" src="../assets/imgs/blob1.svg" alt="" />
       <img class="blob2" src="../assets/imgs/blob2.svg" alt="" />
@@ -25,6 +25,8 @@ import { reactive, onMounted } from "vue";
 import blogPage from "./blog.vue";
 import bus from "../event/event";
 import { getConfigInfo } from "../apis/blog";
+
+import router from "../router/index";
 let state = reactive({
   hideIndexPage: false,
   clientWidth: 0,
@@ -65,9 +67,11 @@ onMounted(() => {
 /**
  * 进入软件页面
  */
-const entrySoftware = () => {
-
-}
+// const entrySoftware = () => {
+//   console.log(router);
+//   router.push("/software")
+//   // window.
+// }
 
 /**
  * 进入首页界面
