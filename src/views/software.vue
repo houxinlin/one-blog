@@ -8,27 +8,41 @@
         </div>
         <div>
             <ul class="list">
-                <li class="type-item">
-                    <h2>Android</h2>
-                    <ul class="type-list">
+                <template v-for="(value, key) in state.list" :key="value">
+                    <li class="type-item">
+                        <h2>{{ key }}</h2>
+                        <ul class="type-list">
+                            <template v-for="(software) in value" :key="software.index">
+                                <li>
+                                    <h4>{{ software.softwareName }}</h4>
+                                    <p>{{ software.softwareDescribe }}</p>
+                                    <div class="bottom">
+                                        <a target="_block" class="source" :href="software.githubUrl">Github</a>
+                                        <a target="_block" class="download" :href="software.binUrl">下载</a>
+                                    </div>
+                                </li>
+                            </template>
+                        </ul>
+                    </li>
+                </template>
 
-                        <li>
-                            <h5>即时通信</h5>
-                            <p>这是一个简介</p>
-                            <div class="bottom">
-                                <a class="source" href="">Github</a>
-                                <a class="download" href="">下载</a>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
+
             </ul>
         </div>
     </div>
 </template>
 <script setup>
 import { listSoftware } from "../apis/blog";
+import { reactive, onMounted } from "vue";
+let state = reactive({
+    list: false,
+});
 
+onMounted(() => {
+    listSoftware().then((res) => {
+        state.list = res.data;
+    })
+})
 </script>
 <style lang="less" scoped>
 .flex-center {
@@ -76,15 +90,17 @@ a {
         p {
             height: 140px;
             font-size: 13px;
+            margin-top: 5px;
         }
 
         a {
             background: #f3f3f3;
-            padding: 5px 15px;
+            padding: 4px 8px;
             border-radius: 3px;
             display: flex;
             align-items: center;
             cursor: pointer;
+            font-size: 13px;
 
         }
 
