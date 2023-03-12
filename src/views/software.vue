@@ -16,9 +16,12 @@
                                 <li>
                                     <h4>{{ software.softwareName }}</h4>
                                     <p>{{ software.softwareDescribe }}</p>
+                                    <a target="_block" :href="'http://www.houxinlin.com/res' + software.gifPath">
+                                        <img :src="'http://www.houxinlin.com/res' + software.gifPath">
+                                    </a>
                                     <div class="bottom">
-                                        <a target="_block" class="source" :href="software.githubUrl">Github</a>
-                                        <a target="_block" class="download" :href="software.binUrl">下载</a>
+                                        <a target="_block" class="source btn" :href="software.githubUrl">Github</a>
+                                        <a target="_block" class="download btn" :href="software.binUrl">下载</a>
                                     </div>
                                 </li>
                             </template>
@@ -88,12 +91,13 @@ a {
         }
 
         p {
-            height: 140px;
             font-size: 13px;
             margin-top: 5px;
+            max-height: 70px;
+            height: 61px;
         }
 
-        a {
+        a.btn {
             background: #f3f3f3;
             padding: 4px 8px;
             border-radius: 3px;
@@ -104,9 +108,17 @@ a {
 
         }
 
+        img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            margin-top: 5px;
+        }
+
         .bottom {
             display: flex;
             justify-content: space-between;
+            margin-top: 5px;
         }
 
         a.source {}
